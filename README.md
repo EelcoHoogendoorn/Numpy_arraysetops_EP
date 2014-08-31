@@ -17,6 +17,7 @@ This is a draft for a numpy EP, aiming for a comprehensive overhaul of the array
   * difference
   * exclusive (xor)
   * contains (in1d)
+
 The generalization of the existing array set operations pertains primarily to the extension of this functionality to different types of key objects. For instance, we may wish to find the intersection of several sets of graph edges. All the functions described above build upon this generalized notion of a key object.
 
 Some brief examples to give an impression hereof:
