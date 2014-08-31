@@ -102,6 +102,7 @@ class GroupBy(object):
         return np.split(values, self.index.slices[1:-1], axis=0)
 
     def split(self, values):
+        """some sensible defaults"""
         try:
             return self.split_array_as_array(values)
         except:
@@ -109,23 +110,18 @@ class GroupBy(object):
 
     def __call__(self, values):
         """
-        not sure how i feel about this. explicit is better than implict
-        but group_by(keys).split(values) does not sit too well with me either
+        not sure how i feel about this. explicit is better than implict?
         """
         return self.unique, self.split(values)
 
 
-    # ufunc based reduction methods. should they return np.unique?
+    # ufunc based reduction methods. should they return unique keys by default?
 
     def reduce(self, values, operator = np.add):
         """
         reduce the values over identical key groups, using the ufunc operator
         reduction is over the first axis, which should have elements corresponding to the keys
         all other axes are treated indepenently for the sake of this reduction
-        note that this code is only C-vectorized over the first axis
-        that is fine is this inner loop is significant, but not so much if it isnt
-        if we have only few keys, but values[0].size is substantial, a reduction via
-        as_list may be preferable
         """
         values = values[self.index.sorter]
         return operator.reduceat(values, self.index.start)
@@ -248,3 +244,19 @@ class GroupBy(object):
 
 
     #implement iter interface? could simply do zip( group_by(keys)(values)), no?
+
+
+
+def group_by(keys, values=None, reduction=None, axis=0):
+    """
+    slightly higher level interface to grouping
+    """
+    g = GroupBy(keys, axis)
+    if values is None:
+        return g
+    groups = g.split(values)
+    if reduction is None:
+        return g.unique, groups
+    return [(key,reduction(group)) for key, group in itertools.izip(g.unique, groups)]
+
+

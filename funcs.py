@@ -1,7 +1,7 @@
 
 """
-some novel suggested functions of arraysetops type, or which intimiately relate
-to the indexing mechanism
+some novel suggested functions of arraysetops type,
+or functions which intimiately relate to the indexing mechanism
 """
 
 from index import *
@@ -19,11 +19,15 @@ def indices(A, B, axis=axis_default, assume_contained=True):
     if assume_contained==true, it is assumed that the values in B are indeed present in A
     if not, a key error is raised in case a value is missing
 
+    is using searchedsorted(sorter) wise? or is creating a sorted copy and inverting index more cache friendly?
+    probably sepends on the size of values. otoh, binary search has poor cache coherence anyway
     """
     Ai = as_index(A, axis)
+    if isinstance(Ai, LexIndex): raise KeyError('Composite key objects not supported')
     #use this for getting Ai.keys and Bi.keys organized the same way;
-    #sorting is superfluous though. make this cached too?
-    Bi = as_index(B, axis)
+    #sorting is superfluous though. make sorting a cached property?
+    #should we be working with cached properties generally?
+    Bi = as_index(B, axis, base=True)
 
     I = np.searchsorted(Ai.keys, Bi.keys, sorter=Ai.sorter)
     indices = Ai.sorter[I]
@@ -59,9 +63,6 @@ def count_table(*keys):
 def multiplicity(keys, axis = axis_default):
     """
     return the multiplicity of each key, or how often it occurs in the set
-    note that we are not interested in the unique values for this operation,
-    casting doubt on the current numpy design which places np.unique
-    at the center of the interface for this kind of operation
     given how often i use multiplicity, id like to have it in the numpy namespace
     it is also quite useful for rewriting some common arraysetops
     """

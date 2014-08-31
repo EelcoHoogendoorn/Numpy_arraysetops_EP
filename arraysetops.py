@@ -37,9 +37,9 @@ def count_selected(A, B, axis=axis_default):
     """
     count how often the elements of B occur in A
     returns an array of unsigned integers, one for each key in B
+    should this be a private function, or part of the API?
 
-    this isnt the most efficient way of doing it, but it is rather elegant
-
+    this is perhaps not the most efficient way of doing it, but it is rather elegant
     alternatively, compute intersection, while computing idx to map back to original space
     dont need to as_index first
     """
@@ -48,8 +48,9 @@ def count_selected(A, B, axis=axis_default):
     Bi = as_index(B, axis=axis)
 
     query_multiplicity = multiplicity(Bi, axis=0)
-    joint_multiplicity = multiplicity(np.concatenate((Bi.keys, Ai.keys)), axis=0)[:Bi.size]
+    joint_multiplicity = multiplicity(_set_concatenate((Bi.keys, Ai.keys)), axis=0)[:Bi.size]
     return joint_multiplicity - query_multiplicity
+
 
 def contains(A, B, axis=axis_default):
     """
@@ -68,7 +69,7 @@ def _set_preprocess(sets, **kwargs):
     assume_unique   = kwargs.get('assume_unique', False)
 
     if assume_unique:
-        sets = [as_index(s, axis=axis).keys for s in sets]
+        sets = [as_index(s, axis=axis).unique for s in sets]
     else:
         sets = [as_index(s, axis=axis).unique for s in sets]
     return sets
@@ -92,13 +93,12 @@ def _set_concatenate(sets):
 
 def _set_count(sets, sc, **kwargs):
     """
-    return the elements which occur sc times
+    return the elements which occur sc times over the sequence of sets
+    used by both exclusive and intersection
     """
     sets = _set_preprocess(sets, **kwargs)
     i = as_index(_set_concatenate(sets), axis=0, base=True)
     return i.unique[i.count==sc]
-##    u, c = count(_set_concatenate(sets), axis=0)
-##    return u[c == sc]
 
 def union(*sets, **kwargs):
     """all unique items which occur in any one of the sets"""
@@ -126,5 +126,6 @@ def difference(*sets, **kwargs):
     head, tail = sets[0], sets[1:]
     idx = as_index(head, **kwargs)
     lhs = idx.unique
+    print lhs
     rhs = [intersection(idx, s, **kwargs) for s in tail]
     return exclusive(lhs, *rhs, axis=0, assume_unique = True)

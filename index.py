@@ -19,6 +19,15 @@ only the latter need to be part of the numpy API.
 That said, these classes can also be very useful
 in those places where the standard operations do not quite cover your needs,
 saving your from completely reinventing the wheel.
+
+notes:
+    do we need to work more with cached properties here?
+    generally, what is necessary and significant to precompute is pretty obvious
+    but sometimes, even the sorting might not be required
+
+    do we need to give index a stable flag?
+    for grouping, stable sort is generally desirable,
+    wehreas for set operations, we are better off using the fastest sort
 """
 
 from utility import *
@@ -35,14 +44,22 @@ class BaseIndex(object):
         """
         keys is a flat array of possibly compsite type
         """
-        self.keys   = np.asarray(keys).flatten()
-        self.sorted = np.sort(self.keys)
+        self._keys   = np.asarray(keys).flatten()
+        self.sorted = np.sort(self._keys)
         #the slicing points of the bins to reduce over
         self.flag   = self.sorted[:-1] != self.sorted[1:]
         self.slices = np.concatenate((
             [0],
             np.flatnonzero(self.flag)+1,
             [self.size]))
+
+    @property
+    def keys(self):
+        return self._keys
+    @property
+    def size(self):
+        """number of keys"""
+        return self._keys.size
 
     @property
     def start(self):
@@ -52,22 +69,16 @@ class BaseIndex(object):
     def stop(self):
         """stop index of all bins"""
         return self.slices[1:]
-    @property
-    def groups(self):
-        return len(self.start)
-    @property
-    def size(self):
-        return self.keys.size
 
 
     @property
     def unique(self):
-        """the first entry of each bin is a unique key"""
+        """all unique keys"""
         return self.sorted[self.start]
     @property
-    def uniques(self):
+    def groups(self):
         """number of unique keys"""
-        return len(self.slices)-1
+        return len(self.start)
 
     @property
     def count(self):
@@ -83,17 +94,18 @@ class Index(BaseIndex):
     """
     index object over a set of keys
     adds support for more extensive functionality, notably grouping
+    relies on indirect sorting
     maybe it should be called argindex?
     """
-    def __init__(self, keys):
+    def __init__(self, keys, stable):
         """
         keys is a flat array of possibly composite type
         """
-        self.keys   = np.asarray(keys)
-        #find indices which sort the keys
-        self.sorter = np.argsort(self.keys)
+        self._keys   = np.asarray(keys)
+        #find indices which sort the keys; use mergesort for stability, so first and last give correct results
+        self.sorter = np.argsort(self._keys, kind='mergesort' if stable else 'quicksort')
         #computed sorted keys
-        self.sorted = self.keys[self.sorter]
+        self.sorted = self._keys[self.sorter]
         #the slicing points of the bins to reduce over
         self.flag   = self.sorted[:-1] != self.sorted[1:]
         self.slices = np.concatenate((
@@ -140,10 +152,8 @@ class ObjectIndex(Index):
     this can be integrated with regular index ala lexsort, no?
     not sure what is more readable though
 
-    also; would like to fully abstract the voidobjects away
-    should be able to access keys as a regular type, for instance
     """
-    def __init__(self, keys, axis):
+    def __init__(self, keys, axis, stable):
         self.axis = axis
         self.dtype = keys.dtype
 
@@ -151,7 +161,12 @@ class ObjectIndex(Index):
         self.shape = keys.shape
         keys = array_as_object(keys)
 
-        super(ObjectIndex, self).__init__(keys)
+        super(ObjectIndex, self).__init__(keys, stable)
+
+    @property
+    def keys(self):
+        keys = array_as_typed(self._keys, self.dtype, self.shape)
+        return np.swapaxes(keys, self.axis, 0)
 
     @property
     def unique(self):
@@ -175,12 +190,12 @@ class LexIndex(Index):
     customization of column layout will have to be done at the call site
 
     """
-    def __init__(self, keys):
-        self.keys   = tuple(np.asarray(key) for key in keys)
+    def __init__(self, keys, stable):
+        self._keys   = tuple(np.asarray(key) for key in keys)
 
-        keyviews    = tuple(array_as_object(key) if key.ndim>1 else key for key in self.keys)
+        keyviews    = tuple(array_as_object(key) if key.ndim>1 else key for key in self._keys)
         #find indices which sort the keys; complex keys which lexsort does not accept are bootstrapped from Index
-        self.sorter = np.lexsort(tuple(Index(key).inverse if key.dtype.kind is 'V' else key for key in keyviews))
+        self.sorter = np.lexsort(tuple(Index(key, stable).inverse if key.dtype.kind is 'V' else key for key in keyviews))
         #computed sorted keys
         self.sorted = tuple(key[self.sorter] for key in keyviews)
         #the slicing points of the bins to reduce over
@@ -192,12 +207,13 @@ class LexIndex(Index):
             np.flatnonzero(self.flag)+1,
             [self.size]))
 
+
     @property
     def unique(self):
         """returns a tuple of unique key columns"""
         return tuple(
             (array_as_typed(s, k.dtype, k.shape) if k.ndim>1 else s)[self.start]
-                for s, k in zip(self.sorted, self.keys))
+                for s, k in zip(self.sorted, self._keys))
 
     @property
     def size(self):
@@ -210,10 +226,10 @@ class LexIndexSimple(Index):
     in case all columns are indeed simple. not sure this is worth the extra code
     """
     def __init__(self, keys):
-        self.keys   = tuple(np.asarray(key) for key in keys)
-        self.sorter = np.lexsort(self.keys)
+        self._keys   = tuple(np.asarray(key) for key in keys)
+        self.sorter = np.lexsort(self._keys)
         #computed sorted keys
-        self.sorted = tuple(key[self.sorter] for key in self.keys)
+        self.sorted = tuple(key[self.sorter] for key in self._keys)
         #the slicing points of the bins to reduce over
         self.flag   = reduce(
             np.logical_or,
@@ -234,7 +250,7 @@ class LexIndexSimple(Index):
 
 
 
-def as_index(keys, axis = axis_default, base=False):
+def as_index(keys, axis = axis_default, base=False, stable=True):
     """
     casting rules for a keys object to an index object
 
@@ -251,12 +267,12 @@ def as_index(keys, axis = axis_default, base=False):
     this avoids an indirect sort; if it isnt required, this has better performance
     """
     if isinstance(keys, Index):
-        if isinstance(keys, BaseIndex) and base==False:
+        if type(keys) is BaseIndex and base==False:
             keys = keys.keys    #need to upcast to an indirectly sorted index type
         else:
             return keys         #already done here
     if isinstance(keys, tuple):
-        return LexIndex(keys)
+        return LexIndex(keys, stable)
     try:
         keys = np.asarray(keys)
     except:
@@ -267,7 +283,7 @@ def as_index(keys, axis = axis_default, base=False):
         if base:
             return BaseIndex(keys)
         else:
-            return Index(keys)
+            return Index(keys, stable=stable)
     else:
-        return ObjectIndex(keys, axis)
+        return ObjectIndex(keys, axis, stable=stable)
 
