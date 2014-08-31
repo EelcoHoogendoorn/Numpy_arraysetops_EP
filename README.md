@@ -23,7 +23,7 @@ The generalization of the existing array set operations pertains primarily to th
 Some brief examples to give an impression hereof:
 ```python
 #three sets of graph edges (doublet of ints)
-edges = np.random.randint(0,9,(3,100,2)
+edges = np.random.randint(0,9,(3,100,2))
 #find graph edges exclusive to one of three sets
 ex = exclusive(*edges)
 print ex
