@@ -29,7 +29,7 @@ def indices(A, B, axis=axis_default, assume_contained=True):
     #should we be working with cached properties generally?
     Bi = as_index(B, axis, base=True)
 
-    I = np.searchsorted(Ai.keys, Bi.keys, sorter=Ai.sorter)
+    I = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter)
     indices = Ai.sorter[I]
 
     if not assume_contained:

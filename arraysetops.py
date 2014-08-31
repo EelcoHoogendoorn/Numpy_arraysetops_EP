@@ -1,13 +1,8 @@
 
 
 """
-rewriet of classic arraysetops using the indexing class hierarchy
-these need some rewriting still
-we need to upcast to index object at the entry point,
-and downcast to key objects when returning
-internally, we should be dealing only with index objects
-most of these operations require concatenation; this needs to be
-dealt with from with the index object
+this is a rewrite of classic arraysetops using the indexing class hierarchy
+these could probably be optimized still
 """
 
 
@@ -76,12 +71,7 @@ def _set_preprocess(sets, **kwargs):
 
 def _set_concatenate(sets):
     """
-    concat indices?
     concat set objects. handles both arrays and tuples of arrays
-    integrate this into index-object instead?
-    nope, cant be part of class, since we need multiple operands
-    how to preserve nested index structure?
-    in any case, this function should taken and return indices
     """
     if any(not isinstance(s, tuple) for s in sets):
         #assume all arrays
@@ -126,6 +116,5 @@ def difference(*sets, **kwargs):
     head, tail = sets[0], sets[1:]
     idx = as_index(head, **kwargs)
     lhs = idx.unique
-    print lhs
     rhs = [intersection(idx, s, **kwargs) for s in tail]
     return exclusive(lhs, *rhs, axis=0, assume_unique = True)
