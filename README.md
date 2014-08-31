@@ -20,7 +20,7 @@ This is a draft for a numpy EP, aiming for a comprehensive overhaul of the array
 The generalization of the existing array set operations pertains primarily to the extension of this functionality to 'complex key objects'. For instance, we may wish to find the intersection of several sets of graph edges. All the functions described above build upon this generalized notion of a key object.
 
 Some brief examples:
-'''python
+```python
 #find graph edges (doublet of ints) exclusive to one of three sets
 edges = np.random.randint(0,9,(3,100,2)
 ex = exclusive(*edges)
@@ -32,4 +32,6 @@ print indices( union(*edges), ex)
 #group and reduce values by identical keys
 values = np.random.rand(100,20)
 print group_by(edges[0]).median(values):
-'''
+```
+
+
