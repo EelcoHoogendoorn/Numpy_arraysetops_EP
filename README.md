@@ -1,7 +1,7 @@
 Numpy array set operations Enhancement Proposal draft
 ====================
 
-This is a draft for a numpy EP, aiming for a comprehensive overhaul of the arraysetops module. The planned functionality includes:
+This is a draft for a numpy EP, aiming for a comprehensive overhaul of the arraysetops module. Once the design has crystallized, the intent is to bring the tests and documentation up to numpy standards, and merge it into the next numpy release. The planned functionality includes:
 
 * Rich and efficient grouping functionality:
   * splitting of values by key-group
@@ -10,7 +10,7 @@ This is a draft for a numpy EP, aiming for a comprehensive overhaul of the array
   * indices: numpy equivalent of list.index
   * count: numpy equivalent of collections.Counter
   * multiplicity: number of occurances of each key in a sequence
-  * count_table: like R's table
+  * count_table: like R's table or pandas crosstab
 * Some generalization of existing array set operation, such as:
   * unique 
   * union
