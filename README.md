@@ -45,6 +45,6 @@ The two complex key types currently supported, beyond standard sequences of sort
 * What about nesting of key objects? should be possible too, but not fully supported yet
 *	What about floating point nd keys? currently, they will be treated as object indices. However, bitwise and floating point equality are not the same thing 
 *	Add special index classes for things like object arrays of variable length strings?
-*	While this redesign is aimed more at expanding functionality than optimizing performance, the most common code paths might benefit from some specialization, such as the concatenation of sorted sets into sorted sets
+*	While this redesign is aimed more at expanding functionality than optimizing performance, the most common code paths might benefit from some specialization, such as the concatenation of sorted sets
 *	In general: are there further generalizations we are still missing? merge/join functionality?
 
