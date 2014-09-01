@@ -10,7 +10,7 @@ This is a draft for a numpy EP, aiming for a comprehensive overhaul of the array
   * indices: numpy equivalent of list.index
   * count: numpy equivalent of collections.Counter
   * multiplicity: number of occurances of each key in a sequence
-  * count_table: like R's table or pandas crosstab
+  * count_table: like R's table or pandas crosstab, or an ndim version of np.bincount
 * Some generalization of existing array set operation, such as:
   * unique 
   * union
