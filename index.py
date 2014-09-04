@@ -101,9 +101,10 @@ class Index(BaseIndex):
         """
         keys is a flat array of possibly composite type
         """
+        self.stable  = stable
         self._keys   = np.asarray(keys)
         #find indices which sort the keys; use mergesort for stability, so first and last give correct results
-        self.sorter = np.argsort(self._keys, kind='mergesort' if stable else 'quicksort')
+        self.sorter = np.argsort(self._keys, kind='mergesort' if self.stable else 'quicksort')
         #computed sorted keys
         self.sorted = self._keys[self.sorter]
         #the slicing points of the bins to reduce over
@@ -122,7 +123,7 @@ class Index(BaseIndex):
     @property
     def rank(self):
         """how high in sorted list each key is"""
-        return self.sorter.argsort()
+        return self.sorter.argsort(kind='mergesort' if self.stable else 'quicksort')
     @property
     def sorted_group_rank_per_key(self):
         """find a better name for this? enumeration of sorted keys. also used in median implementation"""
@@ -130,15 +131,17 @@ class Index(BaseIndex):
     @property
     def inverse(self):
         """return index array that maps unique values back to original space"""
-        return self.sorted_group_rank_per_key[self.rank]
+        inv = np.empty(self.size, np.int)
+        inv[self.sorter] = self.sorted_group_rank_per_key
+        return inv
+##        return self.sorted_group_rank_per_key[self.rank]
 
-
-    def indices(self, other):
-        """
-        determine at which indices a second set equals a first
-        equivalent to list.index
-        """
-        return np.searchsorted(self.unique, other)
+##    def indices(self, other):
+##        """
+##        determine at which indices a second set equals a first
+##        equivalent to list.index
+##        """
+##        return np.searchsorted(self.unique, other)
 
 
 
@@ -218,6 +221,7 @@ class LexIndex(Index):
     @property
     def size(self):
         return self.sorter.size
+
 
 class LexIndexSimple(Index):
     """
