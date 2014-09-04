@@ -16,7 +16,8 @@ def unique(keys, return_index = False, return_inverse = False, return_count = Fa
     cleaner to call index and its properties directly,
     should you want something beyond simply unique values
     """
-    index = as_index(keys, axis, base = not (return_index or return_inverse))
+    stable = return_index or return_inverse
+    index = as_index(keys, axis, base = not stable, stable = stable)
 
     ret = index.unique,
     if return_index:

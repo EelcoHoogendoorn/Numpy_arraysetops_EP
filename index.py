@@ -123,7 +123,10 @@ class Index(BaseIndex):
     @property
     def rank(self):
         """how high in sorted list each key is"""
-        return self.sorter.argsort(kind='mergesort' if self.stable else 'quicksort')
+        r = np.empty(self.size, np.int)
+        r[self.sorter] = np.arange(self.size)
+        return r
+##        return self.sorter.argsort(kind='mergesort' if self.stable else 'quicksort')
     @property
     def sorted_group_rank_per_key(self):
         """find a better name for this? enumeration of sorted keys. also used in median implementation"""
