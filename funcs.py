@@ -22,6 +22,9 @@ def indices(A, B, axis=axis_default, assume_contained=True):
     is using searchedsorted(sorter) wise? or is creating a sorted copy and inverting index more cache friendly?
     probably sepends on the size of values. otoh, binary search has poor cache coherence anyway
     """
+    A = np.asarray(A)
+    B = np.asarray(B)
+
     Ai = as_index(A, axis)
     if isinstance(Ai, LexIndex): raise KeyError('Composite key objects not supported')
     #use this for getting Ai.keys and Bi.keys organized the same way;
@@ -29,8 +32,16 @@ def indices(A, B, axis=axis_default, assume_contained=True):
     #should we be working with cached properties generally?
     Bi = as_index(B, axis, base=True)
 
-    I = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter)
-    indices = Ai.sorter[I]
+    Il = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
+    Ir = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='right')
+
+    #allow for duplicates
+    I = np.zeros(Ai.size+1, np.int)
+    I[Il] = 1
+    I[Ir] = -1
+    I = np.nonzero(np.cumsum(I))[0]
+
+    indices = Ai.sorter[I[::-1]]
 
     if not assume_contained:
         if not np.all(A[indices]==B):
