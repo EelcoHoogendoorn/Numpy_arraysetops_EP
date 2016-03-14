@@ -1,9 +1,9 @@
-
 """
 class hierarchy for indexing a set of keys
-the class hierarchy allows for code reuse, while providing specializations for different
-types of key objects, yielding maximum flexibility and performance
+the class hierarchy allows for code reuse, while providing specializations for different types of key objects
 """
+
+from builtins import *
 
 """
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
@@ -40,9 +40,10 @@ class BaseIndex(object):
     no grouping, or lex-keys are supported,
     or anything that would require an indirect sort
     """
+
     def __init__(self, keys):
         """
-        keys is a flat array of possibly compsite type
+        keys is a flat array of possibly composite type
         """
         self._keys   = np.asarray(keys).flatten()
         self.sorted = np.sort(self._keys)
@@ -56,6 +57,7 @@ class BaseIndex(object):
     @property
     def keys(self):
         return self._keys
+
     @property
     def size(self):
         """number of keys"""
@@ -65,16 +67,17 @@ class BaseIndex(object):
     def start(self):
         """start index of all bins"""
         return self.slices[:-1]
+
     @property
     def stop(self):
         """stop index of all bins"""
         return self.slices[1:]
 
-
     @property
     def unique(self):
         """all unique keys"""
         return self.sorted[self.start]
+
     @property
     def groups(self):
         """number of unique keys"""
@@ -84,6 +87,7 @@ class BaseIndex(object):
     def count(self):
         """number of times each key occurs"""
         return np.diff(self.slices)
+
     @property
     def uniform(self):
         """returns true if each key occurs an equal number of times"""
@@ -97,9 +101,13 @@ class Index(BaseIndex):
     relies on indirect sorting
     maybe it should be called argindex?
     """
+
     def __init__(self, keys, stable):
         """
         keys is a flat array of possibly composite type
+
+        if stable is true, stable sorting of the keys is used. stable sorting is required
+        uf first and last properties are required
         """
         self.stable  = stable
         self._keys   = np.asarray(keys)
@@ -120,6 +128,7 @@ class Index(BaseIndex):
         perhaps it was intended to be used to do group_by(keys).first(values)?
         in any case, included for backwards compatibility with np.unique"""
         return self.sorter[self.start]
+
     @property
     def rank(self):
         """how high in sorted list each key is"""
@@ -127,38 +136,31 @@ class Index(BaseIndex):
         r[self.sorter] = np.arange(self.size)
         return r
 ##        return self.sorter.argsort(kind='mergesort' if self.stable else 'quicksort')
+
     @property
     def sorted_group_rank_per_key(self):
         """find a better name for this? enumeration of sorted keys. also used in median implementation"""
         return np.cumsum(np.concatenate(([False], self.flag)))
+
     @property
     def inverse(self):
         """return index array that maps unique values back to original space"""
         inv = np.empty(self.size, np.int)
         inv[self.sorter] = self.sorted_group_rank_per_key
         return inv
-##        return self.sorted_group_rank_per_key[self.rank]
-
-##    def indices(self, other):
-##        """
-##        determine at which indices a second set equals a first
-##        equivalent to list.index
-##        """
-##        return np.searchsorted(self.unique, other)
-
 
 
 class ObjectIndex(Index):
     """
     given axis enumerates the keys
     all other axes form the keys
-    groups will be formed on the basis of bitwise equality
+    groups will be formed on the basis of bitwise equality between void objects
 
     should we retire objectindex?
     this can be integrated with regular index ala lexsort, no?
     not sure what is more readable though
-
     """
+
     def __init__(self, keys, axis, stable):
         self.axis = axis
         self.dtype = keys.dtype
@@ -194,8 +196,8 @@ class LexIndex(Index):
     note that multidimensional columns are indexed by their first column,
     and no per-column axis keyword is supplied,
     customization of column layout will have to be done at the call site
-
     """
+
     def __init__(self, keys, stable):
         self._keys   = tuple(np.asarray(key) for key in keys)
 
@@ -212,7 +214,6 @@ class LexIndex(Index):
             [0],
             np.flatnonzero(self.flag)+1,
             [self.size]))
-
 
     @property
     def unique(self):
@@ -254,7 +255,6 @@ class LexIndexSimple(Index):
     @property
     def size(self):
         return self.sorter.size
-
 
 
 def as_index(keys, axis = axis_default, base=False, stable=True):

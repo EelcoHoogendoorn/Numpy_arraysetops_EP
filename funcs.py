@@ -1,4 +1,3 @@
-
 """
 some novel suggested functions of arraysetops type,
 or functions which intimiately relate to the indexing mechanism
@@ -6,6 +5,7 @@ or functions which intimiately relate to the indexing mechanism
 
 from index import *
 from grouping import GroupBy
+
 
 def indices(A, B, axis=axis_default, assume_contained=True):
     """
@@ -58,6 +58,7 @@ def count(keys, axis = axis_default):
     index = as_index(keys, axis, base = True)
     return index.unique, index.count
 
+
 def count_table(*keys):
     """
     R's pivot table or pandas 'crosstab'
@@ -71,7 +72,8 @@ def count_table(*keys):
     np.add.at(t, inverses, 1)
     return tuple(uniques), t
 
-def multiplicity(keys, axis = axis_default):
+
+def multiplicity(keys, axis=axis_default):
     """
     return the multiplicity of each key, or how often it occurs in the set
     given how often i use multiplicity, id like to have it in the numpy namespace
@@ -80,7 +82,8 @@ def multiplicity(keys, axis = axis_default):
     index = as_index(keys, axis)
     return index.count[index.inverse]
 
-def rank(keys, axis = axis_default):
+
+def rank(keys, axis=axis_default):
     """
     where each item is in the pecking order.
     not sure this should be part of the public api, cant think of any use-case right away
@@ -89,6 +92,7 @@ def rank(keys, axis = axis_default):
     index = as_index(keys, axis)
     return index.rank
 
+
 def incidence(boundary):
     """
     given an Nxm matrix containing boundary info between simplices,
@@ -96,4 +100,3 @@ def incidence(boundary):
     not to be part of numpy API, to be sure, just something im playing with
     """
     return GroupBy(boundary).group(np.arange(boundary.size) // boundary.shape[1])
-

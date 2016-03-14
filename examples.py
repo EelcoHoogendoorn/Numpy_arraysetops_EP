@@ -8,6 +8,13 @@ from API import *
 import matplotlib.pyplot as pp
 
 
+def test_count_table():
+    k = 'aababaababbbaabba'
+    k = [c for c in k]
+    i = np.random.randint(0,10, len(k))
+    print(count_table(k, i)[1])
+
+
 def test_radial():
     x = np.linspace(-2,2, 64)
     y = x[:, None]
@@ -68,9 +75,8 @@ def test_meshing():
     boundary_points = unique(boundary_edges)
 
     if False:
-        print boundary_edges
-        print incidence(boundary_edges)
-
+        print(boundary_edges)
+        print(incidence(boundary_edges))
 
     #create some random values on faces
     #we want to smooth them over the mesh to create a nice hilly landscape
@@ -109,8 +115,3 @@ def test_meshing():
     pp.ylim(-1,1)
     pp.axis('equal')
     pp.show()
-
-
-if __name__=='__main__':
-    test_radial()
-    test_meshing()

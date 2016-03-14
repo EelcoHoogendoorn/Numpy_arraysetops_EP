@@ -1,10 +1,7 @@
-
-
 """
 this is a rewrite of classic arraysetops using the indexing class hierarchy
 these could probably be optimized still
 """
-
 
 from index import *
 from funcs import *
@@ -56,6 +53,7 @@ def contains(A, B, axis=axis_default):
     """
     return count_selected(A, B, axis=axis) > 0
 
+
 def _set_preprocess(sets, **kwargs):
     """
     common code for all set operations that has been factored out
@@ -69,6 +67,7 @@ def _set_preprocess(sets, **kwargs):
     else:
         sets = [as_index(s, axis=axis).unique for s in sets]
     return sets
+
 
 def _set_concatenate(sets):
     """
@@ -91,6 +90,7 @@ def _set_count(sets, sc, **kwargs):
     i = as_index(_set_concatenate(sets), axis=0, base=True)
     return i.unique[i.count==sc]
 
+
 def union(*sets, **kwargs):
     """all unique items which occur in any one of the sets"""
     sets = _set_preprocess(sets, **kwargs)
@@ -101,6 +101,7 @@ def intersection(*sets, **kwargs):
     """perform intersection on an sequence of sets; items which are in all sets"""
     return _set_count(sets, len(sets), **kwargs)
 
+
 def exclusive(*sets, **kwargs):
     """
     return items which are exclusive to one of the sets;
@@ -110,9 +111,12 @@ def exclusive(*sets, **kwargs):
     """
     return _set_count(sets, 1, **kwargs)
 
+
 def difference(*sets, **kwargs):
     """
     substracts all tail sets from the head set
+
+    alt implementation: compute union of tail, then union with head, then use set_count(1)
     """
     head, tail = sets[0], sets[1:]
     idx = as_index(head, **kwargs)
