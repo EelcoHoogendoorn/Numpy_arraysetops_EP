@@ -106,11 +106,13 @@ class GroupBy(object):
         try:
             return self.split_array_as_array(values)
         except:
+            # iter in python 3
             return self.split_array_as_list(values)
 
     def __call__(self, values):
         """
         not sure how i feel about this. explicit is better than implict?
+        also, add py2 py3 split here
         """
         return self.unique, self.split(values)
 
