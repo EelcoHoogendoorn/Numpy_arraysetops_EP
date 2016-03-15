@@ -1,5 +1,5 @@
 
-from index import *
+from numpy_tools.index import *
 
 
 class GroupBy(object):

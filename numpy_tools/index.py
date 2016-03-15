@@ -4,6 +4,7 @@ the class hierarchy allows for code reuse, while providing specializations for d
 """
 
 from builtins import *
+from numpy_tools.utility import *
 
 """
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
@@ -30,7 +31,6 @@ notes:
     wehreas for set operations, we are better off using the fastest sort
 """
 
-from utility import *
 
 
 class BaseIndex(object):

@@ -4,8 +4,8 @@ examples:
 
 some more complex examples of actual use cases than found in simple tests
 """
-from API import *
 import matplotlib.pyplot as pp
+from API import *
 
 
 def test_count_table():

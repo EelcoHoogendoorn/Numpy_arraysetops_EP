@@ -1,6 +1,7 @@
 
+import numpy as np
+from numpy_tools import *
 
-from API import *
 
 
 def test_indices():

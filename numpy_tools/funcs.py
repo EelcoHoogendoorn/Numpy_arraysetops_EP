@@ -3,8 +3,8 @@ some novel suggested functions of arraysetops type,
 or functions which intimiately relate to the indexing mechanism
 """
 
-from index import *
-from grouping import GroupBy
+from numpy_tools.grouping import GroupBy
+from numpy_tools.index import *
 
 
 def indices(A, B, axis=axis_default, assume_contained=True):

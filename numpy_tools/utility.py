@@ -3,8 +3,7 @@ some utility functions
 """
 
 import numpy as np
-import itertools
-from semantics import *
+from numpy_tools.semantics import *
 
 
 def as_struct_array(*cols):
