@@ -1,25 +1,15 @@
+"""unit tests"""
 
 import numpy as np
+import pytest
+
 from numpy_tools import *
 
 
-
-def test_indices():
-    A = np.array([[0, 1],
-           [0, 2],
-           [1, 1],
-           [0, 2]])
-    B = np.array([[0,2]])
-    print(indices(A, B))
-
-
-def test_basic():
+def test_group_by():
 
     keys   = ["e", "b", "b", "c", "d", "e", "e", 'a']
     values = [1.2, 4.5, 4.3, 2.0, 5.67, 8.08, 9.01,1]
-
-##    keys   = np.array(["a", "b", "b", "c", "d", "e", "e",'d','a','c'])
-##    values = np.array([1.2, 4.5, 4.3, 2.0, 5.67, 8.08, 9.01, 1,2,3])
 
     print('two methods of splitting by group')
     print('as iterable')
@@ -53,12 +43,9 @@ def test_basic():
 
 
 def test_lex_median():
-    """
-    for making sure i squased all bugs related to fancy-keys and median filter implementation
-    """
+    """for making sure i squased all bugs related to fancy-keys and median filter implementation"""
     keys1  = ["e", "b", "b", "c", "d", "e", "e", 'a']
     keys2  = ["b", "b", "b", "d", "e", "e", 'e', 'e']
-##    keys3 = np.random.randint(0,2,(8,2))
     values = [1.2, 4.5, 4.3, 2.0, 5.6, 8.8, 9.1, 1]
 
     unique, median = group_by((keys1, keys2)).median(values)
@@ -77,16 +64,14 @@ def test_dict():
     {'dept': '003', 'sku': 'foo', 'transId': 'uniqueId7', 'qty': 700}
     ]
 
-    inputs = dict( (k, [i[k] for i in input ]) for k in input[0].keys())
+    inputs = dict((k, [i[k] for i in input ]) for k in input[0].keys())
     print(group_by((inputs['dept'], inputs['sku'])).mean(inputs['qty']))
 
 
 def test_fancy_keys():
-    """
-    test Index subclasses
-    """
-    keys        = np.random.randint(0, 2, (20,3)).astype(np.int8)
-    values      = np.random.randint(-1,2,(20,4))
+    """test Index subclasses"""
+    keys        = np.random.randint(0, 2, (20, 3)).astype(np.int8)
+    values      = np.random.randint(-1, 2, (20, 4))
 
     #all these various datastructures should produce the same behavior
     #multiplicity is a nice unit test, since it draws on most of the low level functionality
@@ -142,57 +127,70 @@ def test_compact():
     print(unique2)
     print(median)
 
+
 def test_timings():
-    """test some performance questions"""
+    """small performance test"""
     idx = np.random.randint(0, 1000, 10000)
     g = group_by(idx)
     values = np.random.rand(10000, 100)
-    assert(np.allclose( g.at(values), g.reduce(values)))
+    assert (np.allclose(g.at(values), g.reduce(values)))
+
     from time import clock
     t = clock()
-
     for i in range(100):
         g.reduce(values)
-    print(clock()-t)
+    print('reducing with np.add over 1000 groups with 10000x100 values repeated 100 times took %f seconds' % (clock()-t))
 
 
 def test_indices():
-    """
-    test indices function
-    """
-    values = np.random.rand(100)
-    idx = np.random.randint(0,100, 10)
-    assert(np.all(indices(values, values[idx])==idx))
-    assert(np.all(contains(values, values[idx])))
+    """test indices function"""
+    values = np.random.rand(20)
+    idx = [1, 2, 5, 7]
+
+    assert(np.alltrue(indices(values, values[idx]) == idx))
+    assert(np.alltrue(contains(values, values[idx])))
+    with pytest.raises(KeyError):
+        indices(values, [-1], assume_contained=False)
+
+
+def test_indices_object():
+    """test indices function with objectindex"""
+    A = np.array(
+        [[0, 1],
+         [0, 2],
+         [1, 1],
+         [0, 2]])
+    B = np.array([[0, 2]])
+    assert np.alltrue(indices(A, B) == 1)
 
 
 def test_setops():
-    """
-    test generalized classic setops
-    """
-    edges = np.random.randint(0,9,(3,100,2))
+    """test generalized classic set operations"""
+    # edges exclusive to one of three sets
+    edges = np.random.randint(0, 9, size=(3, 100, 2))
     print(exclusive(*edges))
 
-    edges = np.arange(20).reshape(10,2)
-    assert(np.all(difference(edges[:8], edges[-8:])==edges[:2]))
+    # difference on object keys
+    edges = np.arange(20).reshape(10, 2)
+    assert(np.all(difference(edges[:8], edges[-8:]) == edges[:2]))
 
+    # unique on lex keys
     key1 = list('abc')*10
     key2 = np.random.randint(0,9,30)
     print(unique( (key1, key2)))
 
 
-def test_funcs():
-    t = count_table(*np.random.randint(0,4,(3,1000)))
+def test_count_table():
+    k = list('aababaababbbaabba')
+    i = np.random.randint(0, 10, len(k))
+    l, t = count_table(k, i)
+    print(l)
     print(t)
 
+    l, t = count_table(*np.random.randint(0,4,(3,1000)))
+    print(l)
+    print(t)
 
-if __name__=='__main__':
-    test_setops()
-    test_funcs()
-    test_basic()
-    test_lex_median()
-    test_dict()
-    test_fancy_keys()
-    test_compact()
-    test_indices()
-    test_timings()
+    l, t = count_table(np.random.randint(0,4,(1000,3)))
+    print(l)
+    print(t)

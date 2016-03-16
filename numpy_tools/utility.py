@@ -1,9 +1,6 @@
-"""
-some utility functions
-"""
+"""some utility functions"""
 
 import numpy as np
-from numpy_tools.semantics import *
 
 
 def as_struct_array(*cols):
@@ -15,6 +12,7 @@ def as_struct_array(*cols):
         data['f'+str(i)] = c
     return data
 
+
 def axis_as_object(arr, axis=-1):
     """
     cast the given axis of an array to a void object
@@ -24,6 +22,8 @@ def axis_as_object(arr, axis=-1):
     shape = arr.shape
     arr = np.ascontiguousarray(np.swapaxes(arr, axis, -1))
     return arr.view(np.dtype((np.void, arr.dtype.itemsize * shape[axis]))).reshape(np.delete(shape, axis))
+
+
 def object_as_axis(arr, dtype, axis=-1):
     """cast an array of void objects to a typed axis"""
     return np.swapaxes(arr.view(dtype).reshape(arr.shape+(-1,)), axis, -1)
@@ -33,11 +33,9 @@ def array_as_object(arr):
     """view everything but the first axis as a void object"""
     arr = arr.reshape(len(arr),-1)
     return axis_as_object(arr)
+
+
 def array_as_typed(arr, dtype, shape):
     """unwrap a void object to its original type and shape"""
     return object_as_axis(arr, dtype).reshape(shape)
 
-##def array_as_struct(arr):
-##    return np.ascontiguousarray(arr).view([('f0', arr.dtype, arr.shape[1:])])#.flatten()
-##def struct_as_array(arr):
-##    return arr.view(arr['f0'].dtype)

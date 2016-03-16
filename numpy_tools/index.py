@@ -5,6 +5,10 @@ the class hierarchy allows for code reuse, while providing specializations for d
 
 from builtins import *
 from numpy_tools.utility import *
+from numpy_tools import semantics
+from functools import reduce
+
+
 
 """
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
@@ -30,8 +34,6 @@ notes:
     for grouping, stable sort is generally desirable,
     wehreas for set operations, we are better off using the fastest sort
 """
-
-
 
 class BaseIndex(object):
     """
@@ -135,7 +137,6 @@ class Index(BaseIndex):
         r = np.empty(self.size, np.int)
         r[self.sorter] = np.arange(self.size)
         return r
-##        return self.sorter.argsort(kind='mergesort' if self.stable else 'quicksort')
 
     @property
     def sorted_group_rank_per_key(self):
@@ -257,7 +258,7 @@ class LexIndexSimple(Index):
         return self.sorter.size
 
 
-def as_index(keys, axis = axis_default, base=False, stable=True):
+def as_index(keys, axis = semantics.axis_default, base=False, stable=True):
     """
     casting rules for a keys object to an index object
 
@@ -294,3 +295,5 @@ def as_index(keys, axis = axis_default, base=False, stable=True):
     else:
         return ObjectIndex(keys, axis, stable=stable)
 
+
+__all__ = ['as_index']

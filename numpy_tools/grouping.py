@@ -1,5 +1,7 @@
-
+"""grouping module"""
+import numpy as np
 from numpy_tools.index import *
+import itertools
 
 
 class GroupBy(object):
@@ -106,7 +108,7 @@ class GroupBy(object):
         try:
             return self.split_array_as_array(values)
         except:
-            # iter in python 3
+            # FIXME: change to iter in python 3?
             return self.split_array_as_list(values)
 
     def __call__(self, values):
@@ -243,10 +245,7 @@ class GroupBy(object):
         if axis: values = np.rollaxis(values, axis)
         return self.unique, values[self.index.sorter[self.index.stop-1]]
 
-
-
     #implement iter interface? could simply do zip( group_by(keys)(values)), no?
-
 
 
 def group_by(keys, values=None, reduction=None, axis=0):
@@ -262,3 +261,4 @@ def group_by(keys, values=None, reduction=None, axis=0):
     return [(key,reduction(group)) for key, group in itertools.izip(g.unique, groups)]
 
 
+__all__ = ['group_by']

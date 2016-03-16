@@ -5,9 +5,10 @@ these could probably be optimized still
 
 from numpy_tools.funcs import *
 from numpy_tools.index import *
+from numpy_tools import semantics
 
 
-def unique(keys, return_index = False, return_inverse = False, return_count = False, axis = axis_default):
+def unique(keys, return_index=False, return_inverse=False, return_count=False, axis=semantics.axis_default):
     """
     backwards compatible interface with numpy.unique
     in the long term i think the kwargs should be deprecated though
@@ -27,7 +28,7 @@ def unique(keys, return_index = False, return_inverse = False, return_count = Fa
     return ret[0] if len(ret) == 1 else ret
 
 
-def count_selected(A, B, axis=axis_default):
+def count_selected(A, B, axis=semantics.axis_default):
     """
     count how often the elements of B occur in A
     returns an array of unsigned integers, one for each key in B
@@ -46,7 +47,7 @@ def count_selected(A, B, axis=axis_default):
     return joint_multiplicity - query_multiplicity
 
 
-def contains(A, B, axis=axis_default):
+def contains(A, B, axis=semantics.axis_default):
     """
     test if B is contained in A; 'does A contain B?'
     returns a bool array with length of B
@@ -60,7 +61,7 @@ def _set_preprocess(sets, **kwargs):
     common code for all set operations that has been factored out
     this should return an index object; simply multi-upcast
     """
-    axis            = kwargs.get('axis', axis_default)
+    axis            = kwargs.get('axis', semantics.axis_default)
     assume_unique   = kwargs.get('assume_unique', False)
 
     if assume_unique:
@@ -124,3 +125,6 @@ def difference(*sets, **kwargs):
     lhs = idx.unique
     rhs = [intersection(idx, s, **kwargs) for s in tail]
     return exclusive(lhs, *rhs, axis=0, assume_unique = True)
+
+
+__all__ = ['unique', 'count_selected', 'contains', 'union', 'intersection', 'exclusive', 'difference']

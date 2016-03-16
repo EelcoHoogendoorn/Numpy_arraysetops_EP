@@ -4,10 +4,12 @@ or functions which intimiately relate to the indexing mechanism
 """
 
 from numpy_tools.grouping import GroupBy
-from numpy_tools.index import *
+from numpy_tools.index import LexIndex, as_index
+from numpy_tools import semantics
+import numpy as np
 
 
-def indices(A, B, axis=axis_default, assume_contained=True):
+def indices(A, B, axis=semantics.axis_default, assume_contained=True):
     """
     vectorized numpy equivalent of list.index
     find indices such that np.all( A[indices] == B)
@@ -26,31 +28,26 @@ def indices(A, B, axis=axis_default, assume_contained=True):
     B = np.asarray(B)
 
     Ai = as_index(A, axis)
-    if isinstance(Ai, LexIndex): raise KeyError('Composite key objects not supported')
+    if isinstance(Ai, LexIndex):
+        raise ValueError('Composite key objects not supported in indices function')
     #use this for getting Ai.keys and Bi.keys organized the same way;
     #sorting is superfluous though. make sorting a cached property?
     #should we be working with cached properties generally?
     Bi = as_index(B, axis, base=True)
 
-    Il = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
-    Ir = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='right')
+    # use raw private keys here, rather than public unpacked keys
+    I = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
 
-    #allow for duplicates
-    I = np.zeros(Ai.size+1, np.int)
-    I[Il] = 1
-    I[Ir] = -1
-    I = np.nonzero(np.cumsum(I))[0]
-
-    indices = Ai.sorter[I[::-1]]
+    indices = Ai.sorter[I]
 
     if not assume_contained:
-        if not np.all(A[indices]==B):
+        if not np.alltrue(A[indices] == B):
             raise KeyError('Not all keys in B are present in A')
 
     return indices
 
 
-def count(keys, axis = axis_default):
+def count(keys, axis = semantics.axis_default):
     """
     numpy work-alike of collections.Counter
     sparse equivalent of count_table
@@ -73,7 +70,7 @@ def count_table(*keys):
     return tuple(uniques), t
 
 
-def multiplicity(keys, axis=axis_default):
+def multiplicity(keys, axis=semantics.axis_default):
     """
     return the multiplicity of each key, or how often it occurs in the set
     given how often i use multiplicity, id like to have it in the numpy namespace
@@ -83,7 +80,7 @@ def multiplicity(keys, axis=axis_default):
     return index.count[index.inverse]
 
 
-def rank(keys, axis=axis_default):
+def rank(keys, axis=semantics.axis_default):
     """
     where each item is in the pecking order.
     not sure this should be part of the public api, cant think of any use-case right away

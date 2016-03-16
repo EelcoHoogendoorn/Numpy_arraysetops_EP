@@ -1,25 +1,18 @@
-
 """
 examples:
 
-some more complex examples of actual use cases than found in simple tests
+some more complex examples of actual use cases than found in unit tests
 """
 import matplotlib.pyplot as pp
-from API import *
+from numpy_tools import *
 
 
-def test_count_table():
-    k = 'aababaababbbaabba'
-    k = [c for c in k]
-    i = np.random.randint(0,10, len(k))
-    print(count_table(k, i)[1])
-
-
-def test_radial():
+def test_radial_reduction():
+    """radial reduction example"""
     x = np.linspace(-2,2, 64)
     y = x[:, None]
     x = x[None, :]
-    R = np.sqrt( x**2+y**2)
+    R = np.sqrt(x**2+y**2)
 
     def airy(r, sigma):
         from scipy.special import j1
@@ -47,7 +40,7 @@ def test_radial():
     pp.show()
 
 
-def test_meshing():
+def test_mesh_solver():
     """
     meshing example
     demonstrates the use of multiplicity, and group.median
@@ -105,7 +98,6 @@ def test_meshing():
         face_values   = gather(vertex_values)
         vertex_values = scatter(face_values)
         vertex_values[boundary_points] = 0
-
 
     #display our nicely rolling hills and their boundary
     x, y = points.T
