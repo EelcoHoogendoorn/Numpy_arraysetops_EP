@@ -51,6 +51,8 @@ def count(keys, axis = semantics.axis_default):
     """
     numpy work-alike of collections.Counter
     sparse equivalent of count_table
+
+    note: do we want utility functions for things like finding the most common key? max_count?
     """
     index = as_index(keys, axis, base = True)
     return index.unique, index.count

@@ -2,10 +2,11 @@
 
 import numpy as np
 import numpy_tools.semantics
-import numpy_tools as npt
 
 numpy_tools.semantics.backwards_compatible = True
 numpy_tools.semantics.axis_default = None
+
+import numpy_tools as npt
 
 ['unique', 'group_by']
 

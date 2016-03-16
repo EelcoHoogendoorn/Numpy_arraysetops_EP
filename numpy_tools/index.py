@@ -9,7 +9,6 @@ from numpy_tools import semantics
 from functools import reduce
 
 
-
 """
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
 perform and store precomputations on a set of keys,
