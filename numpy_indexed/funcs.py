@@ -1,7 +1,4 @@
-"""
-some novel suggested functions of arraysetops type,
-or functions which intimiately relate to the indexing mechanism
-"""
+"""some useful functions of arraysetops type not currently present in numpy"""
 
 from numpy_indexed.grouping import GroupBy
 from numpy_indexed.index import LexIndex, as_index
@@ -9,7 +6,7 @@ from numpy_indexed import semantics
 import numpy as np
 
 
-def indices(A, B, axis=semantics.axis_default, assume_contained=True):
+def indices(A, B, axis=semantics.axis_default, assume_contained=False):
     """
     vectorized numpy equivalent of list.index
     find indices such that np.all( A[indices] == B)
@@ -36,9 +33,9 @@ def indices(A, B, axis=semantics.axis_default, assume_contained=True):
     Bi = as_index(B, axis, base=True)
 
     # use raw private keys here, rather than public unpacked keys
-    I = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
+    insertion = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
 
-    indices = Ai.sorter[I]
+    indices = Ai.sorter[insertion]
 
     if not assume_contained:
         if not np.alltrue(A[indices] == B):
@@ -47,14 +44,14 @@ def indices(A, B, axis=semantics.axis_default, assume_contained=True):
     return indices
 
 
-def count(keys, axis = semantics.axis_default):
+def count(keys, axis=semantics.axis_default):
     """
     numpy work-alike of collections.Counter
     sparse equivalent of count_table
 
     note: do we want utility functions for things like finding the most common key? max_count?
     """
-    index = as_index(keys, axis, base = True)
+    index = as_index(keys, axis, base=True)
     return index.unique, index.count
 
 

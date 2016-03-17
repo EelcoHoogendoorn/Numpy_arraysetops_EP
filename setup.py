@@ -1,24 +1,36 @@
-import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
-# Utility function to read the README file.
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+import pkg_conf
+
 
 setup(
-    name = "numpy_indexed",
-    version = "0.1.0",
-    author = "Eelco Hoogendoorn",
-    author_email = "hoogendoorn.eelco@gmail.com",
-    description = ("groupy_by and nd-set operations for numpy"),
-    license = "BSD",
     keywords = "numpy group_by",
-    url = "http://packages.python.org/numpy_indexed",
-    packages=['numpy_indexed'],
-    long_description=read('README.md'),
+    name=pkg_conf.PKG_NAME,
+    version=pkg_conf.get_version(),
+    packages=find_packages(),
+    package_data={
+        "{}.data".format(pkg_conf.PKG_ROOT): pkg_conf.DATA_FILES
+    },
+    description=pkg_conf.get_recipe_meta()['about']['summary'],
+    long_description=pkg_conf.get_readme(),
+    author=pkg_conf.AUTHOR,
+    author_email=pkg_conf.AUTHOR_EMAIL,
+    url=pkg_conf.get_recipe_meta()['about']['home'],
+    license=pkg_conf.get_recipe_meta()['about']['license'],
+    platforms='any',
     classifiers=[
         "Development Status :: 4 - Beta",
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Developers',
         "Topic :: Utilities",
+        'Topic :: Scientific/Engineering',
         "License :: Freely Distributable",
+        'License :: {}'.format(pkg_conf.get_recipe_meta()['about']['license']),
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
     ],
 )

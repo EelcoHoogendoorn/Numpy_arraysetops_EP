@@ -1,0 +1,28 @@
+about:
+  home: http://packages.python.org/numpy_indexed/
+  license: Freely distributable software
+  summary: groupy_by and nd set operations for numpy
+build:
+  number: 0
+package:
+  name: numpy-indexed
+  version: 0.1.0
+source:
+  path: ..
+requirements:
+  build:
+    - python
+    - numpy 1.10*
+    - future 0.15*
+  run:
+    - python
+    - numpy 1.10*
+    - future 0.15*
+test:
+  imports:
+    - numpy_indexed
+  commands:
+    - py.test --pyargs numpy_indexed
+  requires:
+    - pytest >=2.8.4,<2.9
+    - mock 1.3*

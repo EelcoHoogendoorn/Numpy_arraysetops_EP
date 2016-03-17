@@ -1,0 +1,8 @@
+conda:
+    file: environment.yml
+
+python:
+   version: 3.5
+
+python:
+   setup_py_install: true
