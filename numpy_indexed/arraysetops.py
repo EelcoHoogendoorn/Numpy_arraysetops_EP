@@ -1,6 +1,5 @@
 """
-this is a rewrite of classic arraysetops using the indexing class hierarchy
-these could probably be optimized still
+this is a rewrite of numpy arraysetops module using the indexing class hierarchy
 """
 
 from numpy_indexed.funcs import *
@@ -10,10 +9,14 @@ from numpy_indexed import semantics
 
 def unique(keys, return_index=False, return_inverse=False, return_count=False, axis=semantics.axis_default):
     """
+    compute unique keys
+
+    Notes
+    -----
     backwards compatible interface with numpy.unique
-    in the long term i think the kwargs should be deprecated though
-    cleaner to call index and its properties directly,
-    should you want something beyond simply unique values
+    arguably, these kwargs should be deprecated from nump,
+    since it is cleaner to call index and its properties directly,
+    should more than unique values be desired as output
     """
     stable = return_index or return_inverse
     index = as_index(keys, axis, base = not stable, stable = stable)
@@ -32,6 +35,9 @@ def count_selected(A, B, axis=semantics.axis_default):
     """
     count how often the elements of B occur in A
     returns an array of unsigned integers, one for each key in B
+
+    Notes
+    -----
     should this be a private function, or part of the API?
 
     this is perhaps not the most efficient way of doing it, but it is rather elegant
@@ -50,7 +56,20 @@ def count_selected(A, B, axis=semantics.axis_default):
 def contains(A, B, axis=semantics.axis_default):
     """
     test if B is contained in A; 'does A contain B?'
-    returns a bool array with length of B
+
+    Parameters
+    ----------
+    A : indexable key sequence
+        items to search in
+    B :
+        items to search for
+
+    Returns
+    -------
+    a bool array with length of B
+
+    Notes
+    -----
     like np.in1d
     """
     return count_selected(A, B, axis=axis) > 0
