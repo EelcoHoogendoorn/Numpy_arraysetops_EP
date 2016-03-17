@@ -4,8 +4,8 @@ the class hierarchy allows for code reuse, while providing specializations for d
 """
 
 from builtins import *
-from numpy_tools.utility import *
-from numpy_tools import semantics
+from numpy_indexed.utility import *
+from numpy_indexed import semantics
 from functools import reduce
 
 

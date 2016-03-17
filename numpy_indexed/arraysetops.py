@@ -3,9 +3,9 @@ this is a rewrite of classic arraysetops using the indexing class hierarchy
 these could probably be optimized still
 """
 
-from numpy_tools.funcs import *
-from numpy_tools.index import *
-from numpy_tools import semantics
+from numpy_indexed.funcs import *
+from numpy_indexed.index import *
+from numpy_indexed import semantics
 
 
 def unique(keys, return_index=False, return_inverse=False, return_count=False, axis=semantics.axis_default):

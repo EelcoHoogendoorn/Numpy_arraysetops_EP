@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from numpy_tools import *
+from numpy_indexed import *
 
 
 def test_group_by():

@@ -4,7 +4,7 @@ examples:
 some more complex examples of actual use cases than found in unit tests
 """
 import matplotlib.pyplot as pp
-from numpy_tools import *
+from numpy_indexed import *
 
 
 def test_radial_reduction():

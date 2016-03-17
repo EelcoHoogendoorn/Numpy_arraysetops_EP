@@ -1,6 +1,6 @@
 """grouping module"""
 import numpy as np
-from numpy_tools.index import *
+from numpy_indexed.index import *
 import itertools
 
 

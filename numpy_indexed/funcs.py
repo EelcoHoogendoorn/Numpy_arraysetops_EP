@@ -3,9 +3,9 @@ some novel suggested functions of arraysetops type,
 or functions which intimiately relate to the indexing mechanism
 """
 
-from numpy_tools.grouping import GroupBy
-from numpy_tools.index import LexIndex, as_index
-from numpy_tools import semantics
+from numpy_indexed.grouping import GroupBy
+from numpy_indexed.index import LexIndex, as_index
+from numpy_indexed import semantics
 import numpy as np
 
 
