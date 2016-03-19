@@ -8,19 +8,32 @@ class GroupBy(object):
     """
     GroupBy class
 
-    contains an index of its keys, and extends the index functionality
-    with grouping-specific functionality
+    contains an index of keys, and extends the index functionality with grouping-specific functionality
     """
 
-    def __init__(self, keys, axis = 0):
+    def __init__(self, keys, axis=0):
+        """
+        Parameters
+        ----------
+        keys : indexable object
+            sequence of keys to group by
+        axis : int, optional
+            axis to regard as the key-sequence, in case keys is multi-dimensional
+
+        See Also
+        --------
+        numpy_indexed.as_index : for information regarding the casting rules to a valid indexable object
+        """
         self.index = as_index(keys, axis)
 
     #forward interesting/'public' index properties
     @property
     def unique(self):
+        """unique keys"""
         return self.index.unique
     @property
     def count(self):
+        """count of each unique key"""
         return self.index.count
     @property
     def inverse(self):
@@ -261,11 +274,13 @@ def group_by(keys, values=None, reduction=None, axis=0):
     Returns
     -------
     iterable
-        iterable of groups or reduction results
+        if values is None, a GroupBy object of the given keys object
+        if reduction is None, an tuple of a sequence of unique keys and a sequence of grouped values
+        else, a sequence of tuples of unique keys and reductions of values over that key-group
 
     See Also
     --------
-    numpy_indexed.as_index : which explains the casting rules for a valid indexable object
+    numpy_indexed.as_index : for information regarding the casting rules to a valid indexable object
     """
     g = GroupBy(keys, axis)
     if values is None:
