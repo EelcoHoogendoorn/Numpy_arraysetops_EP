@@ -1,8 +1,10 @@
 """unit tests"""
 
+# FIXME : add logic to run numpy tests with our newly created functions?
+
 import numpy as np
 import pytest
-
+import numpy.testing
 from numpy_indexed import *
 from numpy_indexed.utility import as_struct_array
 
