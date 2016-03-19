@@ -32,7 +32,7 @@ print(contains(edges[0], ex))
 # where are the exclusive edges relative to the totality of them?
 print(indices(union(*edges), ex))
 # group and reduce values by identical keys
-values = np.random.rand(100,20)
+values = np.random.rand(100, 20)
 # and so on...
 print(group_by(edges[0]).median(values))
 ```

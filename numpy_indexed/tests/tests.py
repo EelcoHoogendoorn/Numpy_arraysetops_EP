@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from numpy_indexed import *
+from numpy_indexed.utility import as_struct_array
 
 
 def test_group_by():
@@ -75,7 +76,7 @@ def test_fancy_keys():
 
     #all these various datastructures should produce the same behavior
     #multiplicity is a nice unit test, since it draws on most of the low level functionality
-    if backwards_compatible:
+    if semantics.backwards_compatible:
         assert(np.all(
             multiplicity(keys, axis=0) ==           #void object indexing
             multiplicity(tuple(keys.T))))           #lexographic indexing
@@ -111,7 +112,7 @@ def test_fancy_keys():
     #shuffle the images; this is a giant mess now; how to find the unique ones?
     shuffled = images[np.random.randint(0,4,200)]
     #there you go
-    if backwards_compatible:
+    if semantics.backwards_compatible:
         print(unique(shuffled, axis=0))
     else:
         print(unique(shuffled))

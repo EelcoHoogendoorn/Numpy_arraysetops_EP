@@ -1,23 +1,18 @@
 """grouping module"""
 import numpy as np
-from numpy_indexed.index import *
+from numpy_indexed.index import as_index
 import itertools
 
 
 class GroupBy(object):
     """
-    supports ufunc reduction
-    should any other form of reduction be supported?
-    not sure it should; more cleanly written externally i think, on a grouped iterables
-    """
-    def __init__(self, keys, axis = 0):
-        #we could inherit from Index, but the multiple specializations make
-        #holding a reference to an index object more appropriate
-        # note that we dont have backwards compatibility issues with groupby,
-        #so we are going to use axis = 0 as a default
-        #the multi-dimensional structure of a keys object is usualy meaningfull,
-        #and value arguments are not automatically flattened either
+    GroupBy class
 
+    contains an index of its keys, and extends the index functionality
+    with grouping-specific functionality
+    """
+
+    def __init__(self, keys, axis = 0):
         self.index = as_index(keys, axis)
 
     #forward interesting/'public' index properties
@@ -250,7 +245,27 @@ class GroupBy(object):
 
 def group_by(keys, values=None, reduction=None, axis=0):
     """
-    slightly higher level interface to grouping
+    construct a grouping object on the given keys, optionally performing the given reduction on the given values
+
+    Parameters
+    ----------
+    keys : indexable object
+        keys to group by
+    values : array_like, optional
+        sequence of values, of the same length as keys
+        if a reduction function is provided, the given values are reduced by key
+        if no reduction is provided, the given values are grouped and split by key
+    reduction : lambda, optional
+        reduction function to apply to the values in each group
+
+    Returns
+    -------
+    iterable
+        iterable of groups or reduction results
+
+    See Also
+    --------
+    numpy_indexed.as_index : which explains the casting rules for a valid indexable object
     """
     g = GroupBy(keys, axis)
     if values is None:
@@ -258,7 +273,7 @@ def group_by(keys, values=None, reduction=None, axis=0):
     groups = g.split(values)
     if reduction is None:
         return g.unique, groups
-    return [(key,reduction(group)) for key, group in itertools.izip(g.unique, groups)]
+    return [(key, reduction(group)) for key, group in itertools.izip(g.unique, groups)]
 
 
 __all__ = ['group_by']
