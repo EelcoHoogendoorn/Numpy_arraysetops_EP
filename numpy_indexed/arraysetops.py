@@ -119,12 +119,20 @@ def _set_concatenate(sets):
     """
     concat set objects. handles both arrays and tuples of arrays
     """
+    def con(set):
+        # if not all():
+        #     raise ValueError('concatenated keys must have the same dtype')
+        try:
+            return np.concatenate([s for s in sets if len(s)])
+        except ValueError:
+            return set[0]
+
     if any(not isinstance(s, tuple) for s in sets):
         #assume all arrays
-        return np.concatenate(sets)
+        return con(sets)
     else:
         #assume all tuples
-        return tuple(np.concatenate(s) for s in zip(*sets))
+        return tuple(con(s) for s in zip(*sets))
 
 
 def _set_count(sets, sc, **kwargs):

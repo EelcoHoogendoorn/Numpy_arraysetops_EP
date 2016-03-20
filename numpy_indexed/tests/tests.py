@@ -176,8 +176,8 @@ def test_setops_edgecase():
     # test repeating values in both arguments
     assert np.array_equal(count_selected([1, 2, 3, 1], [1, 1, 2]), [2, 2, 1])
 
-    # FIXME: this casts the dtype to float. how to avoid?
-    print(difference([1], []))
+    assert np.array_equal(difference([1], []), [1])
+    assert difference([1], []).dtype == np.int
 
 
 def test_setops():

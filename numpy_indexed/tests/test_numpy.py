@@ -29,15 +29,13 @@ def monkey_patch_tests(numpy_tests):
     run monkey-patched versions of tests for:
         intersect1d, setxor1d, union1d, setdiff1d, unique, in1d
     """
-
     numpy_tests.intersect1d = numpy_indexed.intersection
 
     numpy_tests.setxor1d = numpy_indexed.exclusive
 
     numpy_tests.union1d = numpy_indexed.union
 
-    # fails on casting rules; empty set gets float dtype...
-    # numpy_tests.setdiff1d = numpy_indexed.difference
+    numpy_tests.setdiff1d = numpy_indexed.difference
 
     # make sure this is called with axis=0
     def unique(ar, return_index=False, return_inverse=False, return_counts=False):
@@ -59,5 +57,6 @@ def run_tests(numpy_tests):
 
 if __name__ == '__main__':
     numpy_tests = load_numpy_tests()
+    run_tests(numpy_tests)
     monkey_patch_tests(numpy_tests)
     run_tests(numpy_tests)
