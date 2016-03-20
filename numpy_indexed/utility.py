@@ -17,6 +17,7 @@ def as_struct_array(*columns):
     """
     columns = [np.asarray(c) for c in columns]
     rows = len(columns[0])
+
     names = ['f'+str(i) for i in range(len(columns))]
     dtype = [(names[i], c.dtype, c.shape[1:]) for i,c in enumerate(columns)]
     data = np.empty(rows, dtype)
@@ -34,9 +35,9 @@ def axis_as_object(arr, axis=-1):
     Parameters
     ----------
     arr : ndarray
-        array to
+        array to view as void object type
     axis : int
-        axis to view as a void object
+        axis to view as a void object type
 
     Returns
     -------
