@@ -46,14 +46,18 @@ class BaseIndex(object):
         """
         keys is a flat array of possibly composite type
         """
-        self._keys   = np.asarray(keys).flatten()
+        self._keys = np.asarray(keys).flatten()
         self.sorted = np.sort(self._keys)
         #the slicing points of the bins to reduce over
-        self.flag   = self.sorted[:-1] != self.sorted[1:]
-        self.slices = np.concatenate((
-            [0],
-            np.flatnonzero(self.flag)+1,
-            [self.size]))
+        if self.size == 0:
+            self.flag = np.empty(0, np.bool)
+            self.slices = np.empty(0, np.int)
+        else:
+            self.flag = self.sorted[:-1] != self.sorted[1:]
+            self.slices = np.concatenate((
+                [0],
+                np.flatnonzero(self.flag)+1,
+                [self.size]))
 
     @property
     def keys(self):
@@ -116,12 +120,16 @@ class Index(BaseIndex):
         self.sorter = np.argsort(self._keys, kind='mergesort' if self.stable else 'quicksort')
         #computed sorted keys
         self.sorted = self._keys[self.sorter]
-        #the slicing points of the bins to reduce over
-        self.flag   = self.sorted[:-1] != self.sorted[1:]
-        self.slices = np.concatenate((
-            [0],
-            np.flatnonzero(self.flag)+1,
-            [self.size]))
+        if self.size == 0:
+            self.flag = np.empty(0, np.bool)
+            self.slices = np.empty(0, np.int)
+        else:
+            #the slicing points of the bins to reduce over
+            self.flag   = self.sorted[:-1] != self.sorted[1:]
+            self.slices = np.concatenate((
+                [0],
+                np.flatnonzero(self.flag)+1,
+                [self.size]))
 
     @property
     def index(self):
@@ -207,13 +215,17 @@ class LexIndex(Index):
         #computed sorted keys
         self.sorted = tuple(key[self.sorter] for key in keyviews)
         #the slicing points of the bins to reduce over
-        self.flag   = reduce(
-            np.logical_or,
-            (s[:-1] != s[1:] for s in self.sorted))
-        self.slices = np.concatenate((
-            [0],
-            np.flatnonzero(self.flag)+1,
-            [self.size]))
+        if self.size == 0:
+            self.flag = np.empty(0, np.bool)
+            self.slices = np.empty(0, np.int)
+        else:
+            self.flag   = reduce(
+                np.logical_or,
+                (s[:-1] != s[1:] for s in self.sorted))
+            self.slices = np.concatenate((
+                [0],
+                np.flatnonzero(self.flag)+1,
+                [self.size]))
 
     @property
     def unique(self):
@@ -239,13 +251,17 @@ class LexIndexSimple(Index):
         #computed sorted keys
         self.sorted = tuple(key[self.sorter] for key in self._keys)
         #the slicing points of the bins to reduce over
-        self.flag   = reduce(
-            np.logical_or,
-            (s[:-1] != s[1:] for s in self.sorted))
-        self.slices = np.concatenate((
-            [0],
-            np.flatnonzero(self.flag)+1,
-            [self.size]))
+        if self.size == 0:
+            self.flag = np.empty(0, np.bool)
+            self.slices = np.empty(0, np.int)
+        else:
+            self.flag   = reduce(
+                np.logical_or,
+                (s[:-1] != s[1:] for s in self.sorted))
+            self.slices = np.concatenate((
+                [0],
+                np.flatnonzero(self.flag)+1,
+                [self.size]))
 
     @property
     def unique(self):
@@ -280,6 +296,7 @@ def as_index(keys, axis = semantics.axis_default, base=False, stable=True):
             return keys         #already done here
     if isinstance(keys, tuple):
         return LexIndex(keys, stable)
+
     try:
         keys = np.asarray(keys)
     except:

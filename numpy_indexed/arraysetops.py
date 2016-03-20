@@ -71,6 +71,8 @@ def contains(A, B, axis=semantics.axis_default):
     Notes
     -----
     like np.in1d
+
+    isnt this better implemented using searchsorted?
     """
     return count_selected(A, B, axis=axis) > 0
 
@@ -109,7 +111,7 @@ def _set_count(sets, sc, **kwargs):
     """
     sets = _set_preprocess(sets, **kwargs)
     i = as_index(_set_concatenate(sets), axis=0, base=True)
-    return i.unique[i.count==sc]
+    return i.unique[i.count == sc]
 
 
 def union(*sets, **kwargs):

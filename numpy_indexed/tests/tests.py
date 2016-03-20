@@ -168,6 +168,9 @@ def test_indices_object():
 
 
 def test_setops():
+    assert np.array_equal(intersection([1], [1]), [1])
+    assert np.array_equal(intersection([], []), [])
+
     """test generalized classic set operations"""
     # edges exclusive to one of three sets
     edges = np.random.randint(0, 9, size=(3, 100, 2))
