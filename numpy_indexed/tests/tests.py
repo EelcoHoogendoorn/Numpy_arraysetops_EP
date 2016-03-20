@@ -179,6 +179,9 @@ def test_setops_edgecase():
     assert np.array_equal(difference([1], []), [1])
     assert difference([1], []).dtype == np.int
 
+    assert np.array_equal(union([], [], []), [])
+    assert np.array_equal(exclusive([], []), [])
+
 
 def test_setops():
     """test generalized classic set operations"""
