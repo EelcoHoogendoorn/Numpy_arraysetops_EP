@@ -1,26 +1,24 @@
 """monkey-patch the numpy tests, and see if they still run"""
 
-# NOTE: numpy.lib.tests is not a module
-# from numpy.lib.tests import arraysetops
-
+import os
 import numpy
 import numpy_indexed
 import unittest
 
-filename = r"C:\Users\Eelco\Miniconda2\envs\numpy_tools\Lib\site-packages\numpy\lib\tests\test_arraysetops.py"
-
+# load numpy arraysetops testing module
+module_source = os.path.join(os.path.split(numpy.__file__)[0], r"lib\tests\test_arraysetops.py")
+module_name = 'numpy_indexed.tests.test_numpy'
 try:
     import importlib.util
-    spec = importlib.util.spec_from_file_location('numpy_indexed.test_numpy', filename)
+    spec = importlib.util.spec_from_file_location(module_name, module_source)
     numpy_tests = importlib.util.module_from_spec(spec)
-    # spec.loader.exec_module(numpy_tests)
 except:
     import imp
-    numpy_tests = imp.load_source('numpy_indexed.test_numpy', filename)
+    numpy_tests = imp.load_source(module_name, module_source)
 
 def run_patched_tests():
     """
-    run patched versions of
+    run monkey-patched versions of tests for:
         intersect1d, setxor1d, union1d, setdiff1d, unique, in1d
     """
 
@@ -33,10 +31,8 @@ def run_patched_tests():
     # fails on casting rules; empty set gets float dtype...
     # numpy_tests.setdiff1d = numpy_indexed.difference
 
-
-    def unique(*args, **kwargs):
-        kwargs['axis'] = None
-        return numpy_indexed.unique(*args, **kwargs)
+    def unique(ar, return_index=False, return_inverse=False, return_counts=False):
+        return numpy_indexed.unique(ar, None, return_index, return_inverse, return_counts)
     numpy_tests.unique = unique
 
     def in1d(ar1, ar2, assume_unique=False, invert=False):

@@ -167,10 +167,20 @@ def test_indices_object():
     assert np.alltrue(indices(A, B) == 1)
 
 
-def test_setops():
+def test_setops_edgecase():
+    """test some edge cases like zero-length, etc"""
     assert np.array_equal(intersection([1], [1]), [1])
     assert np.array_equal(intersection([], []), [])
 
+    assert np.array_equal(count_selected([], []), [])
+    # test repeating values in both arguments
+    assert np.array_equal(count_selected([1, 2, 3, 1], [1, 1, 2]), [2, 2, 1])
+
+    # FIXME: this casts the dtype to float
+    print(difference([1], []))
+
+
+def test_setops():
     """test generalized classic set operations"""
     # edges exclusive to one of three sets
     edges = np.random.randint(0, 9, size=(3, 100, 2))

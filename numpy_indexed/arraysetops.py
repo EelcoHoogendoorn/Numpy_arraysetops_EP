@@ -7,15 +7,27 @@ from numpy_indexed.index import *
 from numpy_indexed import semantics
 
 
-def unique(keys, return_index=False, return_inverse=False, return_count=False, axis=semantics.axis_default):
+def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse=False, return_count=False):
     """
-    compute unique keys
+    compute the set of unique keys
+
+    Parameters
+    ----------
+    keys : indexable key object
+        keys object to find unique keys within
+    axis : int
+        if keys is a multi-dimensional array, the axis to regard as the sequence of key objects
+    return_index : bool
+        if True, return indexes such that keys[index] == unique
+    return_inverse : bool
+        if True, return the indices such that unique[inverse] == keys
+    return_count : bool
+        if True, return the number of times each unique key occurs in the input
 
     Notes
     -----
-    backwards compatible interface with numpy.unique
-    arguably, these kwargs should be deprecated from nump,
-    since it is cleaner to call index and its properties directly,
+    the kwargs are there to provide a backwards compatible interface to numpy.unique
+    but arguably, it is cleaner to call index and its properties directly,
     should more than unique values be desired as output
     """
     stable = return_index or return_inverse
@@ -36,6 +48,15 @@ def count_selected(A, B, axis=semantics.axis_default):
     count how often the elements of B occur in A
     returns an array of unsigned integers, one for each key in B
 
+    Parameters
+    ----------
+    A : indexable key object
+        items to do lookup in
+    B : indexable key object
+        items to look up in A
+    axis : int
+        if keys is a multi-dimensional array, the axis to regard as the sequence of key objects
+
     Notes
     -----
     should this be a private function, or part of the API?
@@ -43,6 +64,8 @@ def count_selected(A, B, axis=semantics.axis_default):
     this is perhaps not the most efficient way of doing it, but it is rather elegant
     alternatively, compute intersection, while computing idx to map back to original space
     dont need to as_index first
+
+    can also use searchsorted based approach; diff between left and right interval
     """
 
     Ai = as_index(A, axis=axis)
@@ -61,7 +84,7 @@ def contains(A, B, axis=semantics.axis_default):
     ----------
     A : indexable key sequence
         items to search in
-    B :
+    B : indexable key sequence
         items to search for
 
     Returns
@@ -111,6 +134,7 @@ def _set_count(sets, sc, **kwargs):
     """
     sets = _set_preprocess(sets, **kwargs)
     i = as_index(_set_concatenate(sets), axis=0, base=True)
+    # FIXME : this does not work for lex-keys
     return i.unique[i.count == sc]
 
 

@@ -72,7 +72,7 @@ class GroupBy(object):
         """
         group values, without regard for the ordering of self.index.unique
         consume values as they come, and yield key-group pairs as soon as they complete
-        thi spproach is lazy, insofar as grouped values are close in their iterable
+        this approach is lazy, insofar as grouped values are close in their iterable
         """
         from collections import defaultdict
         cache = defaultdict(list)
@@ -129,25 +129,30 @@ class GroupBy(object):
 
     # ufunc based reduction methods. should they return unique keys by default?
 
-    def reduce(self, values, operator = np.add):
+    def reduce(self, values, operator=np.add):
         """
-        reduce the values over identical key groups, using the ufunc operator
+        reduce the values over identical key groups, using the given ufunc
         reduction is over the first axis, which should have elements corresponding to the keys
         all other axes are treated indepenently for the sake of this reduction
+
+        Parameters
+        ----------
+        values : ndarray
+            values to perform reduction over, with len(values) == len(keys)
+        operator : numpy.ufunc
+            a numpy ufunc, such as np.add or np.sum
+
+        Returns
+        -------
+        values reduced by operator over the key-groups
         """
         values = values[self.index.sorter]
         return operator.reduceat(values, self.index.start)
 
-##        if values.ndim>1:
-##            return np.apply_along_axis(
-##                lambda slc: operator.reduceat(slc, self.index.start),
-##                0, values)
-##        else:
-##            return operator.reduceat(values, self.index.start)
     def at(self, values, operator = np.add):
         """
         reduction via at
-        theoretically, this may be faster than reduceat
+        theoretically, this may be faster than reduceat since it avoids the explicit sorting
         however, tests are not kind to that notion
         infact it appears about an order of magnitude slower than reduceat
 
