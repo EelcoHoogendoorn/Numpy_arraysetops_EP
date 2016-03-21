@@ -27,7 +27,7 @@ def load_numpy_tests():
 
 def monkey_patch_tests(numpy_tests):
     """
-    run monkey-patched versions of tests for:
+    monkey-patch the numpy tests of:
         intersect1d, setxor1d, union1d, setdiff1d, unique, in1d
     """
     numpy_tests.intersect1d = numpy_indexed.intersection
@@ -47,6 +47,7 @@ def monkey_patch_tests(numpy_tests):
     def in1d(ar1, ar2, assume_unique=False, invert=False):
         ret = numpy_indexed.contains(ar2, ar1, axis=None)
         return numpy.invert(ret) if invert else ret
+    
     numpy_tests.in1d = in1d
 
 
