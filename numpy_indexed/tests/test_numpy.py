@@ -18,6 +18,7 @@ def load_numpy_tests():
         import importlib.util
         spec = importlib.util.spec_from_file_location(module_name, module_source)
         numpy_tests = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(numpy_tests)
     except:
         import imp
         numpy_tests = imp.load_source(module_name, module_source)

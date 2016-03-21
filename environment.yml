@@ -1,8 +1,8 @@
-name: numpy_tools
+name: numpy_indexed
 channels:
   - anaconda
 dependencies:
-  - python
+  - python =3.5*
   - numpy =1.10*
   - future =0.15*
   # dev
