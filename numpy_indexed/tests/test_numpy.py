@@ -2,6 +2,8 @@
 monkey-patch the numpy tests, and see if they still run with their native function replaced
 with their equivalents from this package
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
 
 import os
 import numpy
@@ -57,8 +59,9 @@ def run_tests(numpy_tests):
     unittest.TextTestRunner(verbosity=3).run(suite)
 
 
-if __name__ == '__main__':
-    numpy_tests = load_numpy_tests()
-    run_tests(numpy_tests)
-    monkey_patch_tests(numpy_tests)
-    run_tests(numpy_tests)
+class TestNumpy(unittest.TestCase):
+  def runTest(self):
+      numpy_tests = load_numpy_tests()
+      run_tests(numpy_tests)
+      monkey_patch_tests(numpy_tests)
+      run_tests(numpy_tests)

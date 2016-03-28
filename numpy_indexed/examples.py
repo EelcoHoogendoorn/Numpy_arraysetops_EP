@@ -3,7 +3,10 @@ examples:
 
 some more complex examples of actual use cases than found in unit tests
 """
-import matplotlib.pyplot as pp
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
+
+import matplotlib.pyplot as plt
 from numpy_indexed import *
 
 
@@ -27,17 +30,17 @@ def test_radial_reduction():
     sample = np.random.poisson(distribution*200+10).astype(np.float)
 
     #is this an airy or gaussian function? hard to tell with all this noise!
-    pp.imshow(sample, interpolation='nearest', cmap='gray')
-    pp.show()
+    plt.imshow(sample, interpolation='nearest', cmap='gray')
+    plt.show()
     #radial reduction to the rescue!
     #if we are sampling an airy function, you will see a small but significant rise around x=1
     g = group_by(np.round(R, 5).flatten())
-    pp.errorbar(
+    plt.errorbar(
         g.unique,
         g.mean(sample.flatten())[1],
         g.std (sample.flatten())[1] / np.sqrt(g.count))
-    pp.xlim(0,2)
-    pp.show()
+    plt.xlim(0, 2)
+    plt.show()
 
 
 def test_mesh_solver():
@@ -101,9 +104,9 @@ def test_mesh_solver():
 
     #display our nicely rolling hills and their boundary
     x, y = points.T
-    pp.tripcolor(x,y, triangles = tris, facecolors = face_values)
-    pp.scatter(x[boundary_points], y[boundary_points])
-    pp.xlim(-1,1)
-    pp.ylim(-1,1)
-    pp.axis('equal')
-    pp.show()
+    plt.tripcolor(x, y, triangles = tris, facecolors = face_values)
+    plt.scatter(x[boundary_points], y[boundary_points])
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+    plt.axis('equal')
+    plt.show()

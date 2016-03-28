@@ -1,15 +1,7 @@
 """
 class hierarchy for indexing a set of keys
 the class hierarchy allows for code reuse, while providing specializations for different types of key objects
-"""
 
-from builtins import *
-from numpy_indexed.utility import *
-from numpy_indexed import semantics
-from functools import reduce
-
-
-"""
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
 perform and store precomputations on a set of keys,
 such as to accelerate subsequent operations involving these keys.
@@ -32,7 +24,15 @@ notes:
     do we need to give index a stable flag?
     for grouping, stable sort is generally desirable,
     wehreas for set operations, we are better off using the fastest sort
+
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
+from functools import reduce
+
+from numpy_indexed.utility import *
+from numpy_indexed import semantics
+
 
 class BaseIndex(object):
     """
@@ -211,7 +211,8 @@ class LexIndex(Index):
 
         keyviews    = tuple(array_as_object(key) if key.ndim>1 else key for key in self._keys)
         #find indices which sort the keys; complex keys which lexsort does not accept are bootstrapped from Index
-        self.sorter = np.lexsort(tuple(Index(key, stable).inverse if key.dtype.kind is 'V' else key for key in keyviews))
+        temp = tuple(Index(key, stable).inverse if key.dtype.kind is 'V' else key for key in keyviews)
+        self.sorter = np.lexsort(temp)
         #computed sorted keys
         self.sorted = tuple(key[self.sorter] for key in keyviews)
         #the slicing points of the bins to reduce over

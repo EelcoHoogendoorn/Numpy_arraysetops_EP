@@ -1,6 +1,8 @@
 """
 this is a rewrite of numpy arraysetops module using the indexing class hierarchy
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
 
 from numpy_indexed.funcs import *
 from numpy_indexed.index import *

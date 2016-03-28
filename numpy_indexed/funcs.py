@@ -1,9 +1,12 @@
 """some useful functions of arraysetops type not currently present in numpy"""
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
+
+import numpy as np
 
 from numpy_indexed.grouping import GroupBy
 from numpy_indexed.index import LexIndex, as_index
 from numpy_indexed import semantics
-import numpy as np
 
 
 def indices(A, B, axis=semantics.axis_default, assume_contained=False):

@@ -1,12 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
 
 import os
 import shutil
 import traceback
-from builtins import *
 import subprocess
 
-import yaml
 from invoke import task, run
 
 import pkg_conf
@@ -58,7 +57,7 @@ def test():
     """
     Runs the test suite
     """
-    run("py.test --cov-config .coveragerc --cov-report term-missing --cov=numpy_indexed --pyargs {}".format(pkg_conf.PKG_ROOT))
+    run("py.test")
 
 
 @task

@@ -1,10 +1,9 @@
 """unit tests"""
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
 
-# FIXME : add logic to run numpy tests with our newly created functions?
-
-import numpy as np
 import pytest
-import numpy.testing
+
 from numpy_indexed import *
 from numpy_indexed.utility import as_struct_array
 
@@ -15,13 +14,16 @@ def test_group_by():
     values = [1.2, 4.5, 4.3, 2.0, 5.67, 8.08, 9.01,1]
 
     print('two methods of splitting by group')
+    print('as list')
+    for k,v in zip(*group_by(keys)(values)):
+        print(k, v)
     print('as iterable')
     g = group_by(keys)
     for k,v in zip(g.unique, g.split_sequence_as_iterable(values)):
         print(k, list(v))
-    print('as list')
-    for k,v in zip(*group_by(keys)(values)):
-        print(k, v)
+    print('iterable as iterable')
+    for k, v in zip(g.unique, g.split_iterable_as_iterable(values)):
+        print(k, list(v))
 
     print('some reducing group operations')
     g = group_by(keys)
@@ -125,6 +127,7 @@ def test_compact():
     key1 = list('abaabb')
     key2 = np.random.randint(0,2,(6,2))
     values = np.random.rand(6,3)
+    g = group_by((key1, key2))
     (unique1, unique2), median = group_by((key1, key2)).median(values)
     print(unique1)
     print(unique2)

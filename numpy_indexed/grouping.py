@@ -1,7 +1,11 @@
 """grouping module"""
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import *
+
+import itertools
+
 import numpy as np
 from numpy_indexed.index import as_index
-import itertools
 
 
 class GroupBy(object):
@@ -66,7 +70,7 @@ class GroupBy(object):
                     cache[i] = v
         s = iter(self.index.sorter)
         for c in self.count:
-            yield (get_value(i) for i in itertools.islice(s, c))
+            yield (get_value(i) for i in itertools.islice(s, int(c)))
 
     def split_iterable_as_unordered_iterable(self, values):
         """
@@ -79,7 +83,7 @@ class GroupBy(object):
         count = self.count
         unique = self.unique
         key = (lambda i: unique[i]) if isinstance(unique, np.ndarray) else (lambda i: tuple(c[i] for c in unique))
-        for i,v in itertools.izip(self.inverse, values):
+        for i,v in zip(self.inverse, values):
             cache[i].append(v)
             if len(cache[i]) == count[i]:
                 yield key(i), cache.pop(i)
@@ -90,9 +94,12 @@ class GroupBy(object):
         but we dont want it completely in memory.
         like a big memory mapped file, for instance
         """
+        print(self.count)
         s = iter(self.index.sorter)
         for c in self.count:
-            yield (values[i] for i in itertools.islice(s, c))
+            print(c)
+            print(type(c))
+            yield (values[i] for i in itertools.islice(s, int(c)))
 
     def split_array_as_array(self, values):
         """
@@ -293,7 +300,7 @@ def group_by(keys, values=None, reduction=None, axis=0):
     groups = g.split(values)
     if reduction is None:
         return g.unique, groups
-    return [(key, reduction(group)) for key, group in itertools.izip(g.unique, groups)]
+    return [(key, reduction(group)) for key, group in zip(g.unique, groups)]
 
 
 __all__ = ['group_by']
