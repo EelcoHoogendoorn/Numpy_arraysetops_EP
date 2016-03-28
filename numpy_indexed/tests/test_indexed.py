@@ -125,7 +125,7 @@ def test_fancy_keys():
 def test_compact():
     """demonstrate the most functionality in the least number of lines"""
     key1 = list('abaabb')
-    key2 = np.random.randint(0,2,(6,2))
+    key2 = np.random.randint(0,2,(6, 2))
     values = np.random.rand(6,3)
     g = group_by((key1, key2))
     (unique1, unique2), median = group_by((key1, key2)).median(values)

@@ -211,8 +211,7 @@ class LexIndex(Index):
 
         keyviews    = tuple(array_as_object(key) if key.ndim>1 else key for key in self._keys)
         #find indices which sort the keys; complex keys which lexsort does not accept are bootstrapped from Index
-        temp = tuple(Index(key, stable).inverse if key.dtype.kind is 'V' else key for key in keyviews)
-        self.sorter = np.lexsort(temp)
+        self.sorter = np.lexsort(tuple(Index(key, stable).inverse if key.dtype.kind == 'V' else key for key in keyviews))
         #computed sorted keys
         self.sorted = tuple(key[self.sorter] for key in keyviews)
         #the slicing points of the bins to reduce over

@@ -21,8 +21,8 @@ def as_struct_array(*columns):
     columns = [np.asarray(c) for c in columns]
     rows = len(columns[0])
 
-    names = ['f'+str(i) for i in range(len(columns))]
-    dtype = [(names[i], c.dtype, c.shape[1:]) for i,c in enumerate(columns)]
+    names = [('f'+str(i)).encode('ascii') for i in range(len(columns))]
+    dtype = [(names[i], c.dtype, c.shape[1:]) for i, c in enumerate(columns)]
     data = np.empty(rows, dtype)
     for i, c in enumerate(columns):
         data[names[i]] = c

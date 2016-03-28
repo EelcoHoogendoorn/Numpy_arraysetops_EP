@@ -3,7 +3,7 @@ channels:
   - anaconda
   - clinicalgraphics
 dependencies:
-  - python =2.7*
+  - python =3.5*
   - numpy =1.10*
   - future =0.15*
   # dev
