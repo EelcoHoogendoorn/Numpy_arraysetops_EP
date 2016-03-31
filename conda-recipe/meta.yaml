@@ -4,6 +4,7 @@ about:
   summary: Numpy indexing based extensions
 build:
   number: 4
+  noarch_python: True
 package:
   name: numpy-indexed
   version: 0.1.2
