@@ -169,10 +169,10 @@ def _assert_hg_version_ok():
 
 def _assert_git_version_ok():
     git_info = _get_git_info()
-
+    print(git_info['branch'])
     if git_info['dirty']:
         _exit("working directory is not clean, release cancelled")
-    if git_info['branch'] != '* master':
+    if git_info['branch'] != b'* master':
         _exit("not on default branch, release cancelled")
 
 
