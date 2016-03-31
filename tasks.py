@@ -298,8 +298,8 @@ def release(yes=False, token=None):
     """
     _assert_release_ok()
 
-    if token is None:
-        token = os.environ['BINSTAR_TOKEN']
+    # if token is None:
+    #     token = os.environ['BINSTAR_TOKEN']
 
     version = pkg_conf.get_version()
 
@@ -310,7 +310,7 @@ def release(yes=False, token=None):
         run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
         if os.path.exists(pkg_path):
             try:
-                run("anaconda -t {} upload {} --user {}".format(token, pkg_path, pkg_conf.ANACONDA_USER))
+                run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
             except:
                 traceback.print_exc()
                 _print("Upload failed.")

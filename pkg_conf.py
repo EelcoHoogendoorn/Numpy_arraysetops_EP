@@ -8,7 +8,7 @@ import yaml
 AUTHOR = 'Eelco Hoogendoorn'
 AUTHOR_EMAIL = 'hoogendoorn.eelco@gmail.com'
 DOC_ROOT = 'docs'
-ANACONDA_USER = 'eelcohoogendoorn'
+ANACONDA_USER = 'EelcoHoogendoorn'
 PKG_ROOT = 'numpy_indexed'
 PKG_NAME = 'numpy-indexed'
 DATA_FILES = ["*.npz", "*.json"]
