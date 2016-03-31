@@ -1,0 +1,27 @@
+about:
+  home: https://bitbucket.org/clinicalgraphics/scikit-clinicalgraphics/
+  license: Freely Distributable
+  summary: Numpy indexing based extensions
+build:
+  number: 0
+package:
+  name: numpy-indexed
+  version: 0.1.dev0
+source:
+  path: ..
+requirements:
+  build:
+    - python
+    - numpy 1.10*
+    - future 0.15*
+  run:
+    - python
+    - numpy 1.10*
+    - future 0.15*
+test:
+  imports:
+    - numpy_indexed
+  commands:
+    - py.test
+  requires:
+    - pytest >=2.8.4,<2.9
