@@ -3,10 +3,10 @@ about:
   license: Freely Distributable
   summary: Numpy indexing based extensions
 build:
-  number: 1
+  number: 2
 package:
   name: numpy-indexed
-  version: 0.1.2
+  version: 0.1.dev2
 requirements:
   build:
   - python
