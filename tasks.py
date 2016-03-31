@@ -185,7 +185,8 @@ def _update_version(new_version_number, build_number):
     with open("{}/__init__.py".format(pkg_conf.PKG_ROOT), "r") as infile:
         init_content = infile.readlines()
 
-    init_content[0] = "__version__ = '{}'".format(new_version_number) + '\n'
+    version_line = [line.startswith('__version__ = ') for line in init_content].index(True)
+    init_content[version_line] = "__version__ = '{}'".format(new_version_number) + '\n'
 
     # Now we write it back to the file
     with open("{}/__init__.py".format(pkg_conf.PKG_ROOT), "w") as outfile:
