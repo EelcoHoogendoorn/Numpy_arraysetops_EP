@@ -3,11 +3,11 @@ about:
   license: Freely Distributable
   summary: Numpy indexing based extensions
 build:
-  number: 4
-  noarch_python: True
+  noarch_python: true
+  number: 0
 package:
   name: numpy-indexed
-  version: 0.1.2
+  version: 0.2.dev0
 requirements:
   build:
   - python
