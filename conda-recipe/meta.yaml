@@ -3,25 +3,25 @@ about:
   license: Freely Distributable
   summary: Numpy indexing based extensions
 build:
-  number: 0
+  number: 2
 package:
   name: numpy-indexed
   version: 0.1.dev0
-source:
-  path: ..
 requirements:
   build:
-    - python
-    - numpy 1.10*
-    - future 0.15*
+  - python
+  - numpy 1.10*
+  - future 0.15*
   run:
-    - python
-    - numpy 1.10*
-    - future 0.15*
+  - python
+  - numpy 1.10*
+  - future 0.15*
+source:
+  path: ..
 test:
-  imports:
-    - numpy_indexed
   commands:
-    - py.test
+  - py.test
+  imports:
+  - numpy_indexed
   requires:
-    - pytest >=2.8.4,<2.9
+  - pytest >=2.8.4,<2.9

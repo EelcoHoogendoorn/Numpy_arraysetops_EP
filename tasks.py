@@ -185,7 +185,7 @@ def _update_version(new_version_number, build_number):
     with open("{}/__init__.py".format(pkg_conf.PKG_ROOT), "r") as infile:
         init_content = infile.readlines()
 
-    init_content[0] = "__version__ = '{}'".format(new_version_number)
+    init_content[0] = "__version__ = '{}'".format(new_version_number) + os.linesep
 
     # Now we write it back to the file
     with open("{}/__init__.py".format(pkg_conf.PKG_ROOT), "w") as outfile:
@@ -199,7 +199,7 @@ def _update_version(new_version_number, build_number):
     recipe_meta["build"]["number"] = build_number
 
     with open("conda-recipe/meta.yaml", "w") as outfile:
-        outfile.write(yaml.safe_dump(recipe_meta, default_flow_style=False, allow_unicode=True).encode("utf-8"))
+        outfile.write(yaml.safe_dump(recipe_meta, default_flow_style=False, allow_unicode=True))
 
     _print("Updated the version number to {}".format(new_version_number))
 
@@ -252,7 +252,7 @@ def update_version(major=False, minor=False, patch=False, release=False):
 
     # the version numbers in the package and recipe have been updated, so commit those changes first
     # run('hg commit -m "Bumped version to {}_{}."'.format(version_number, build_number))
-    run('git add ')
+    run('git add .')
     run('git commit -m "Bumped version to {}_{}."'.format(version_number, build_number))
 
 
