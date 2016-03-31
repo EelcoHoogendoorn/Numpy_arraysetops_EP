@@ -155,29 +155,20 @@ def _get_git_info():
         'branch': branch,
         'id': id,
         "dirty": "modified" in id,
+        "default": "master" in branch
     }
 
 
-def _assert_hg_version_ok():
-    hg_info = _get_hg_info()
-
-    if hg_info['dirty']:
+def _assert_version_ok():
+    info = _get_git_info()
+    if info['dirty']:
         _exit("working directory is not clean, release cancelled")
-    if hg_info['branch'] != 'default':
-        _exit("not on default branch, release cancelled")
-
-
-def _assert_git_version_ok():
-    git_info = _get_git_info()
-    print(git_info['branch'])
-    if git_info['dirty']:
-        _exit("working directory is not clean, release cancelled")
-    if git_info['branch'] != b'* master':
+    if info['default']:
         _exit("not on default branch, release cancelled")
 
 
 def _assert_release_ok():
-    _assert_git_version_ok()
+    _assert_version_ok()
 
     current_version = pkg_conf.get_version()
 
@@ -222,7 +213,7 @@ def update_version(major=False, minor=False, patch=False, release=False):
     """
     Bump the version of the package
     """
-    _assert_git_version_ok()
+    _assert_version_ok()
 
     current_version = pkg_conf.get_version()
     current_build_number = pkg_conf.get_build_number()
