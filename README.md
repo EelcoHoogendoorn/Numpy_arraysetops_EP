@@ -19,7 +19,7 @@ This package contains functionality for indexed operations on numpy ndarrays, pr
   * multiplicity: number of occurrences of each key in a sequence
   * count_table: like R's table or pandas crosstab, or an ndim version of np.bincount
 
-The generalization of the existing array set operations pertains primarily to the extension of this functionality to different types of key objects. For instance, we may wish to find the intersection of several sets of graph edges. All the functions described above build upon this generalized notion of a key object.
+The generalization of the existing array set operations pertains primarily to the extension of this functionality to different types of key objects, such as keys formed by slices of nd-arrays. For instance, we may wish to find the intersection of several sets of graph edges.
 
 Some brief examples to give an impression hereof:
 ```python
@@ -38,6 +38,9 @@ values = np.random.rand(100, 20)
 print(group_by(edges[0]).median(values))
 ```
 
+## Installation
+conda install numpy-indexed -c eelcohoogendoorn
+
 ## Design decisions:
 This package builds upon a generalization of the design pattern as can be found in numpy.unique. That is, by argsorting an ndarray, subsequent operations can be implemented efficiently.
 
@@ -48,8 +51,8 @@ The principal information exposed by an Index object is the required permutation
 The two complex key types currently supported, beyond standard sequences of sortable primitive types, are array keys and composite keys. For the exact casting rules describing valid sequences of key objects to index objects, see as_index().
 
 ## Todo and open questions:
-* What about nesting of key objects? should be possible too, but not fully supported yet
-*	What about floating point nd keys? currently, they will be treated as object indices. However, bitwise and floating point equality are not the same thing 
+* What about nesting of key objects? This should be possible too, but not fully supported yet
+*	What about floating point nd keys? Currently, they are treated as object indices. However, bitwise and floating point equality are not the same thing
 *	Add special index classes for things like object arrays of variable length strings?
 *	While this package is aimed more at expanding functionality than optimizing performance, the most common code paths might benefit from some specialization, such as the concatenation of sorted sets
-*	In general: there may be further generalizations that could be made. merge/join functionality perhaps?
+*	There may be further generalizations that could be made. merge/join functionality perhaps?
