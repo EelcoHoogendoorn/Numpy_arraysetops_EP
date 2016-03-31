@@ -179,7 +179,7 @@ def difference(*sets, **kwargs):
     idx = as_index(head, **kwargs)
     lhs = idx.unique
     rhs = [intersection(idx, s, **kwargs) for s in tail]
-    return exclusive(lhs, *rhs, axis=0, assume_unique = True)
+    return exclusive(lhs, *rhs, axis=0, assume_unique=True)
 
 
 __all__ = ['unique', 'count_selected', 'contains', 'union', 'intersection', 'exclusive', 'difference']

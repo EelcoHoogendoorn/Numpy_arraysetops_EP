@@ -5,7 +5,7 @@ import pkg_conf
 
 
 setup(
-    keywords = "numpy group_by",
+    keywords = "numpy group_by set-operations indexing",
     name=pkg_conf.PKG_NAME,
     version=pkg_conf.get_version(),
     packages=find_packages(),

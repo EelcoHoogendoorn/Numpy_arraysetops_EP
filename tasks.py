@@ -148,6 +148,17 @@ def _get_hg_info():
     }
 
 
+def _get_git_info():
+    id = subprocess.check_output("git identify --id").strip()
+
+    branch = subprocess.check_output("git branch").strip()
+    return {
+        'branch': branch,
+        'id': id,
+        "dirty": "+" in id,
+    }
+
+
 def _assert_version_ok():
     hg_info = _get_hg_info()
 
