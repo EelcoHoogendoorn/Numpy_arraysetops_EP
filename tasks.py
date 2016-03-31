@@ -308,6 +308,7 @@ def release(yes=False, token=None):
     if yes or _confirm(prompt="Do you want to continue?"):
         pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip()
         run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
+        print(pkg_path)
         if os.path.exists(pkg_path):
             try:
                 run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
