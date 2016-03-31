@@ -284,10 +284,10 @@ def _tag_git_revision(revision_tag):
         _exit("Can't tag dirty revision.")
 
     # then tag the current revision
-    if run("git tag -a {} -m '{}'".format(revision_tag, 'Tagged version {}'.format(revision_tag)), warn=True):
+    if run('git tag -a {} -m "{}"'.format(revision_tag, 'Tagged version {}'.format(revision_tag)), warn=True):
         _print("Tag '{}' applied".format(revision_tag))
     else:
-        raise NotImplementedError('should od rollback here')
+        raise NotImplementedError('should do rollback here')
 
 
 @task(help={"yes": "Skip confirmation prompt."})
