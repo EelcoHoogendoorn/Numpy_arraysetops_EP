@@ -1,3 +1,4 @@
+<img src="https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master">
 Numpy indexed operations
 ====================
 
