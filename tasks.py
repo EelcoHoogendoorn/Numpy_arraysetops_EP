@@ -1,5 +1,5 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-from builtins import *
+# from __future__ import absolute_import, division, print_function, unicode_literals
+# from builtins import *
 
 import os
 import shutil
@@ -149,17 +149,16 @@ def _get_hg_info():
 
 
 def _get_git_info():
-    id = subprocess.check_output("git identify --id").strip()
-
-    branch = subprocess.check_output("git branch").strip()
+    id = str(subprocess.check_output("git status").strip())
+    branch = str(subprocess.check_output("git branch").strip())
     return {
         'branch': branch,
         'id': id,
-        "dirty": "+" in id,
+        "dirty": "modified" in id,
     }
 
 
-def _assert_version_ok():
+def _assert_hg_version_ok():
     hg_info = _get_hg_info()
 
     if hg_info['dirty']:
@@ -168,8 +167,17 @@ def _assert_version_ok():
         _exit("not on default branch, release cancelled")
 
 
+def _assert_git_version_ok():
+    git_info = _get_git_info()
+
+    if git_info['dirty']:
+        _exit("working directory is not clean, release cancelled")
+    if git_info['branch'] != '* master':
+        _exit("not on default branch, release cancelled")
+
+
 def _assert_release_ok():
-    _assert_version_ok()
+    _assert_git_version_ok()
 
     current_version = pkg_conf.get_version()
 
@@ -214,7 +222,7 @@ def update_version(major=False, minor=False, patch=False, release=False):
     """
     Bump the version of the package
     """
-    _assert_version_ok()
+    _assert_git_version_ok()
 
     current_version = pkg_conf.get_version()
     current_build_number = pkg_conf.get_build_number()
@@ -251,10 +259,12 @@ def update_version(major=False, minor=False, patch=False, release=False):
     _update_version(version_number, build_number)
 
     # the version numbers in the package and recipe have been updated, so commit those changes first
-    run('hg commit -m "Bumped version to {}_{}."'.format(version_number, build_number))
+    # run('hg commit -m "Bumped version to {}_{}."'.format(version_number, build_number))
+    run('git add ')
+    run('git commit -m "Bumped version to {}_{}."'.format(version_number, build_number))
 
 
-def _tag_revision(revision_tag):
+def _tag_hg_revision(revision_tag):
     """Tag current revision in mercurial."""
     hg_info = _get_hg_info()
     if hg_info['dirty']:
@@ -272,6 +282,19 @@ def _tag_revision(revision_tag):
         # and clean up the working dir so the updated files don't get committed accidentally anyway
         run('hg update -C')
         _exit("Are you sure the version you're going for doesn't already exist?")
+
+
+def _tag_git_revision(revision_tag):
+    """Tag current revision in mercurial."""
+    git_info = _get_git_info()
+    if git_info['dirty']:
+        _exit("Can't tag dirty revision.")
+
+    # then tag the current revision
+    if run("git tag -a {} -m '{}'".format(revision_tag, 'Tagged version {}'.format(revision_tag)), warn=True):
+        _print("Tag '{}' applied".format(revision_tag))
+    else:
+        raise NotImplementedError('should od rollback here')
 
 
 @task(help={"yes": "Skip confirmation prompt."})
@@ -298,7 +321,7 @@ def release(yes=False, token=None):
             except:
                 traceback.print_exc()
                 _print("Upload failed.")
-            _tag_revision("v{}".format(version))
+            _tag_git_revision("v{}".format(version))
             return True
         else:
             _print("Build failed.")
