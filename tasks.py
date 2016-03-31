@@ -311,6 +311,7 @@ def release(yes=False, token=None):
         print(pkg_path)
         print(os.path.exists(pkg_path))
         try:
+            print("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
             run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
         except:
             traceback.print_exc()
