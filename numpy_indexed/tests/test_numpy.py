@@ -14,7 +14,7 @@ import unittest
 def load_numpy_tests():
     # load numpy arraysetops testing module from the installed numpy distro
     numpy_path = os.path.split(numpy.__file__)[0]
-    module_source = os.path.join(numpy_path, r"lib\tests\test_arraysetops.py")
+    module_source = os.path.join(numpy_path, 'lib', 'tests', 'test_arraysetops.py')
     module_name = 'numpy_indexed.tests.numpy_tests'
     try:
         import importlib.util
