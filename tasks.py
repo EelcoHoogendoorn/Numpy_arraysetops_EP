@@ -145,6 +145,7 @@ def _get_hg_info():
         'branch': branch,
         'id': id,
         "dirty": "+" in id,
+        "default": "default" in branch
     }
 
 
@@ -161,7 +162,7 @@ def _get_git_info():
 
 def _assert_version_ok():
     info = _get_git_info()
-    if info['dirty']:
+    if info['dirty'] and False:
         _exit("working directory is not clean, release cancelled")
     if not info['default']:
         _exit("not on default branch, release cancelled")
@@ -198,7 +199,7 @@ def _update_version(new_version_number, build_number):
     recipe_meta["build"]["number"] = build_number
 
     with open("conda-recipe/meta.yaml", "w") as outfile:
-        outfile.write(yaml.safe_dump(recipe_meta, default_flow_style=False, allow_unicode=True).decode("utf-8"))
+        outfile.write(yaml.safe_dump(recipe_meta, default_flow_style=False, allow_unicode=True).encode("utf-8"))
 
     _print("Updated the version number to {}".format(new_version_number))
 
