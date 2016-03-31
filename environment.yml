@@ -3,7 +3,7 @@ channels:
   - anaconda
   - clinicalgraphics
 dependencies:
-  - python
+  - python =3.5*
   - numpy =1.10*
   - future =0.15*
   # dev
@@ -11,5 +11,7 @@ dependencies:
   - invoke >=0.11.1,<0.12
   # tests
   - pytest >=2.8.4,<2.9
-  - matplotlib >=1.4.3,<1.6
-  - scipy
+
+# only required to run the examples
+#  - matplotlib >=1.4.3,<1.6
+#  - scipy
