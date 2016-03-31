@@ -162,7 +162,7 @@ def _get_git_info():
 
 def _assert_version_ok():
     info = _get_git_info()
-    if info['dirty'] and False:
+    if info['dirty']:
         _exit("working directory is not clean, release cancelled")
     if not info['default']:
         _exit("not on default branch, release cancelled")
