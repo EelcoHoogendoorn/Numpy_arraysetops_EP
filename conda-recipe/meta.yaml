@@ -11,7 +11,7 @@ requirements:
   build:
   - python
   - numpy
-  - pyyaml =3.11*
+  - pyyaml 3.11*
   - future 0.15*
   run:
   - python
