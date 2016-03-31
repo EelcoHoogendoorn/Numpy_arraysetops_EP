@@ -310,14 +310,11 @@ def release(yes=False, token=None):
         run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
         print(pkg_path)
         print(os.path.exists(pkg_path))
-        if os.path.exists(pkg_path):
-            try:
-                run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
-            except:
-                traceback.print_exc()
-                _print("Upload failed.")
-            _tag_git_revision("v{}".format(version))
-            return True
-        else:
-            _print("Build failed.")
+        try:
+            run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
+        except:
+            traceback.print_exc()
+            _print("Upload failed.")
             return False
+        _tag_git_revision("v{}".format(version))
+        return True
