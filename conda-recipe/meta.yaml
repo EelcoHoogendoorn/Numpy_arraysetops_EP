@@ -21,7 +21,7 @@ source:
   path: ..
 test:
   commands:
-  - py.test
+  - py.test --pyargs numpy_indexed
   imports:
   - numpy_indexed
   requires:
