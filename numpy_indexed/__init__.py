@@ -1,4 +1,4 @@
-__version__ = '0.1.dev2'
+__version__ = '0.1.2'
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
