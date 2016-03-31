@@ -307,7 +307,7 @@ def release(yes=False, token=None):
             version, pkg_conf.get_build_number(), pkg_conf.PKG_NAME, pkg_conf.ANACONDA_USER))
     if yes or _confirm(prompt="Do you want to continue?"):
         pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip()
-        # run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
+        run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
         print(pkg_path)
         if os.path.exists(pkg_path):
             try:
