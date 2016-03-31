@@ -3,7 +3,7 @@ about:
   license: Freely Distributable
   summary: Numpy indexing based extensions
 build:
-  number: 4
+  number: 5
 package:
   name: numpy-indexed
   version: 0.1.dev0
