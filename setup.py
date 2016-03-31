@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from distutils.core import setup
 
 import pkg_conf
 
@@ -24,7 +25,6 @@ setup(
         'Intended Audience :: Developers',
         "Topic :: Utilities",
         'Topic :: Scientific/Engineering',
-        "License :: Freely Distributable",
         'License :: {}'.format(pkg_conf.get_recipe_meta()['about']['license']),
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
