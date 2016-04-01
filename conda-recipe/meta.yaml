@@ -4,10 +4,10 @@ about:
   summary: Numpy indexing based extensions
 build:
   noarch_python: true
-  number: 0
+  number: 1
 package:
   name: numpy-indexed
-  version: 0.2.dev2
+  version: 0.2.2
 requirements:
   build:
   - python
