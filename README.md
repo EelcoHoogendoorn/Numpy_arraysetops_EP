@@ -16,6 +16,7 @@ This package contains functionality for indexed operations on numpy ndarrays, pr
 * Some new functions:
   * indices: numpy equivalent of list.index
   * count: numpy equivalent of collections.Counter
+  * mode: find the most frequently occuring items in a set
   * multiplicity: number of occurrences of each key in a sequence
   * count_table: like R's table or pandas crosstab, or an ndim version of np.bincount
 

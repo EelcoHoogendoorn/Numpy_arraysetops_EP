@@ -51,8 +51,6 @@ def count(keys, axis=semantics.axis_default):
     """
     numpy work-alike of collections.Counter
     sparse equivalent of count_table
-
-    note: do we want utility functions for things like finding the most common key? max_count?
     """
     index = as_index(keys, axis, base=True)
     return index.unique, index.count
@@ -75,8 +73,6 @@ def count_table(*keys):
 def multiplicity(keys, axis=semantics.axis_default):
     """
     return the multiplicity of each key, or how often it occurs in the set
-    given how often i use multiplicity, id like to have it in the numpy namespace
-    it is also quite useful for rewriting some common arraysetops
     """
     index = as_index(keys, axis)
     return index.count[index.inverse]
@@ -85,8 +81,6 @@ def multiplicity(keys, axis=semantics.axis_default):
 def rank(keys, axis=semantics.axis_default):
     """
     where each item is in the pecking order.
-    not sure this should be part of the public api, cant think of any use-case right away
-    plus, we have a namespace conflict, though its kindof unpythonic to have both np.ndim and np.rank
     """
     index = as_index(keys, axis)
     return index.rank
