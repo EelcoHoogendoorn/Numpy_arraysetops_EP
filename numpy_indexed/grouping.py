@@ -26,7 +26,7 @@ class GroupBy(object):
 
         See Also
         --------
-        numpy_indexed.as_index : for information regarding the casting rules to a valid indexable object
+        numpy_indexed.as_index : for information regarding the casting rules to a valid Index object
         """
         self.index = as_index(keys, axis)
 
@@ -41,21 +41,32 @@ class GroupBy(object):
         return self.index.count
     @property
     def inverse(self):
+        """mapping such that unique[inverse]==keys"""
         return self.index.inverse
     @property
-    def rank(self):
-        return self.index.rank
-
+    def groups(self):
+        """int, number of groups formed by the keys"""
+        return self.index.groups
 
     #some different methods of chopping up a set of values by key
-    #not sure they are all equally relevant, but i actually have real world use cases for most of them
-
     def split_iterable_as_iterable(self, values):
-        """
-        grouping of an iterable. memory consumption depends on the amount of sorting required
-        worst case, if index.sorter[-1] = 0, we need to consume the entire value iterable,
+        """Group iterable into iterables, in the order of the keys
+
+        Parameters
+        ----------
+        values : iterable of length equal to keys
+            iterable of values to be grouped
+
+        Yields
+        ------
+        iterable of items in values
+
+        Notes
+        -----
+        Memory consumption depends on the amount of sorting required
+        Worst case, if index.sorter[-1] = 0, we need to consume the entire value iterable,
         before we can start yielding any output
-        but to the extent that the keys come presorted, the grouping is lazy
+        But to the extent that the keys are already sorted, the grouping is lazy
         """
         values = iter(enumerate(values))
         cache = dict()
@@ -73,10 +84,21 @@ class GroupBy(object):
             yield (get_value(i) for i in itertools.islice(s, int(c)))
 
     def split_iterable_as_unordered_iterable(self, values):
-        """
-        group values, without regard for the ordering of self.index.unique
-        consume values as they come, and yield key-group pairs as soon as they complete
-        this approach is lazy, insofar as grouped values are close in their iterable
+        """Group iterable into iterables, without regard for the ordering of self.index.unique
+        key-group tuples are yielded as soon as they are complete
+
+        Parameters
+        ----------
+        values : iterable of length equal to keys
+            iterable of values to be grouped
+
+        Yields
+        ------
+        tuple of key, and a list of corresponding items in values
+
+        Notes
+        -----
+        This approach is lazy, insofar as grouped values are close in their iterable
         """
         from collections import defaultdict
         cache = defaultdict(list)
@@ -89,31 +111,60 @@ class GroupBy(object):
                 yield key(i), cache.pop(i)
 
     def split_sequence_as_iterable(self, values):
-        """
-        this is the preferred method if values has random access,
-        but we dont want it completely in memory.
-        like a big memory mapped file, for instance
+        """Group sequence into iterables
+
+        Parameters
+        ----------
+        values : iterable of length equal to keys
+            iterable of values to be grouped
+
+        Yields
+        ------
+        iterable of items in values
+
+        Notes
+        -----
+        This is the preferred method if values has random access, but we dont want it completely in memory.
+        Like a big memory mapped file, for instance
         """
         print(self.count)
         s = iter(self.index.sorter)
         for c in self.count:
-            print(c)
-            print(type(c))
             yield (values[i] for i in itertools.islice(s, int(c)))
 
     def split_array_as_array(self, values):
+        """Group ndarray into ndarray by means of reshaping
+
+        Parameters
+        ----------
+        values : ndarray_like, [index.size, ...]
+
+        Returns
+        -------
+        ndarray, [groups, group_size, ...]
+            values grouped by key
+
+        Raises
+        ------
+        AssertionError
+            This operation is only possible if index.uniform==True
         """
-        return grouped values as an ndarray
-        returns an array of shape [groups, groupsize, ungrouped-axes]
-        this is only possible if index.uniform==True
-        """
-        assert(self.index.uniform)
+        assert self.index.uniform, "Array can only be split as array if all groups have the same size"
         values = np.asarray(values)
         values = values[self.index.sorter]
-        return values.reshape(self.index.groups, -1, *values.shape[1:])
+        return values.reshape(self.groups, -1, *values.shape[1:])
 
     def split_array_as_list(self, values):
-        """return grouped values as a list of arrays, or a jagged-array"""
+        """Group values as a list of arrays, or a jagged-array
+
+        Parameters
+        ----------
+        values : ndarray, [keys, ...]
+
+        Returns
+        -------
+        list of length self.groups of ndarray, [key_count, ...]
+        """
         values = np.asarray(values)
         values = values[self.index.sorter]
         return np.split(values, self.index.slices[1:-1], axis=0)
@@ -127,77 +178,92 @@ class GroupBy(object):
             return self.split_array_as_list(values)
 
     def __call__(self, values):
-        """
-        not sure how i feel about this. explicit is better than implict?
-        also, add py2 py3 split here
-        """
+        """not sure how i feel about this. explicit is better than implict?"""
         return self.unique, self.split(values)
 
 
     # ufunc based reduction methods. should they return unique keys by default?
-
     def reduce(self, values, operator=np.add):
-        """
-        reduce the values over identical key groups, using the given ufunc
+        """Reduce the values over identical key groups, using the given ufunc
         reduction is over the first axis, which should have elements corresponding to the keys
         all other axes are treated indepenently for the sake of this reduction
 
         Parameters
         ----------
-        values : ndarray
-            values to perform reduction over, with len(values) == len(keys)
+        values : ndarray, [keys, ...]
+            values to perform reduction over
         operator : numpy.ufunc
             a numpy ufunc, such as np.add or np.sum
 
         Returns
         -------
+        ndarray, [groups, ...]
         values reduced by operator over the key-groups
         """
         values = values[self.index.sorter]
         return operator.reduceat(values, self.index.start)
 
-    def at(self, values, operator = np.add):
-        """
-        reduction via at
-        theoretically, this may be faster than reduceat since it avoids the explicit sorting
-        however, tests are not kind to that notion
-        infact it appears about an order of magnitude slower than reduceat
-
-        only works for add and multiply so far.
-        maximum and minimum have silly identity
-        would need to use np.iinfo and np.finfo; kinda messy
-        just included here for consideration
-        """
-        inverse = self.index.inverse
-        groups = self.index.groups
-
-        def reduce(slc):
-            r = np.empty(groups, values.dtype)
-            r.fill(operator.identity)
-            operator.at(r, inverse, slc)
-            return r
-
-        if values.ndim>1:
-            return np.apply_along_axis(reduce, 0, values)
-        else:
-            return reduce(values)
-
 
     def sum(self, values, axis=0):
-        """compute the sum over each group"""
+        """compute the sum over each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to sum per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, self.reduce(values)
 
     def mean(self, values, axis=0):
-        """compute the mean over each group"""
+        """compute the mean over each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take average of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         count = self.count.reshape(-1,*(1,)*(values.ndim-1))
         return self.unique, self.reduce(values) / count
 
     def var(self, values, axis=0):
-        """compute the variance over each group"""
+        """compute the variance over each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take variance of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         count = self.count.reshape(-1,*(1,)*(values.ndim-1))
@@ -206,15 +272,43 @@ class GroupBy(object):
         return self.unique, self.reduce(err**2) / count
 
     def std(self, values, axis=0):
-        """standard deviation over each group"""
+        """standard deviation over each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take standard deviation of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         unique, var = self.var(values, axis)
         return unique, np.sqrt(var)
 
     def median(self, values, axis=0, average=True):
-        """
-        compute the median value over each group.
-        when average is true, the average is the two cental values is taken
-        for groups with an even key-count
+        """compute the median value over each group.
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take average of per group
+        axis : int, optional
+            alternative reduction axis for values
+        average : bool, optional
+            when average is true, the average of the two cental values is taken for groups with an even key-count
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
         """
         values = np.asarray(values)
 
@@ -242,25 +336,85 @@ class GroupBy(object):
         return self.unique, values
 
     def min(self, values, axis=0):
-        """return the minimum within each group"""
+        """return the minimum within each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take minimum of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, self.reduce(values, np.minimum)
 
     def max(self, values, axis=0):
-        """return the maximum within each group"""
+        """return the maximum within each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take maximum of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, self.reduce(values, np.maximum)
 
     def first(self, values, axis=0):
-        """return values at first occurance of its associated key"""
+        """return values at first occurance of its associated key
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to pick the first value of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, values[self.index.sorter[self.index.start]]
 
     def last(self, values, axis=0):
-        """return values at last occurance of its associated key"""
+        """return values at last occurance of its associated key
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to pick the last value of per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, values[self.index.sorter[self.index.stop-1]]
@@ -269,8 +423,7 @@ class GroupBy(object):
 
 
 def group_by(keys, values=None, reduction=None, axis=0):
-    """
-    construct a grouping object on the given keys, optionally performing the given reduction on the given values
+    """construct a grouping object on the given keys, optionally performing the given reduction on the given values
 
     Parameters
     ----------
@@ -292,7 +445,7 @@ def group_by(keys, values=None, reduction=None, axis=0):
 
     See Also
     --------
-    numpy_indexed.as_index : for information regarding the casting rules to a valid indexable object
+    numpy_indexed.as_index : for information regarding the casting rules to a valid Index object
     """
     g = GroupBy(keys, axis)
     if values is None:

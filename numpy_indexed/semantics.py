@@ -1,11 +1,11 @@
 """
-this toggle switches between preferred or backwards compatible semantics for dealing with key objects.
-current behavior for the arguments to functions like np.unique is to flatten any input arrays.
-arguably, a more unified semantics is achieved by interpreting all key arguments as
-sequences of key objects, whereby non-flat arrays are simply sequences of keys,
-whereby the keys themselves are ndim-1 arrays
-for reasons of backwards compatibility, one may want to retain the default within numpy 1.x,
-but at least an axis keyword to toggle this behavior would be a welcome addition
+This toggle switches between preferred or backwards compatible semantics for dealing with key objects.
+
+The behavior of numpy with respect to arguments to functions like np.unique is to flatten any input arrays.
+Arguably, a more unified semantics is achieved by interpreting all key arguments as sequences of key objects,
+whereby multi-dimensional arrays are simply interpreted as sequences of (complex) keys.
+
+For reasons of backwards compatibility, one may prefer the same semantics as numpy 1.x though
 """
 backwards_compatible = False
 if backwards_compatible:
