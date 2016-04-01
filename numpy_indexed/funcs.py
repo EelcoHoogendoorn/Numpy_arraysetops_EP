@@ -96,6 +96,18 @@ def incidence(boundary):
     """
     given an Nxm matrix containing boundary info between simplices,
     compute indidence info matrix
-    not to be part of numpy API, to be sure, just something im playing with
+    not very reusable; should probably not be in this lib
     """
-    return GroupBy(boundary).group(np.arange(boundary.size) // boundary.shape[1])
+    return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])
+
+
+def mode(pointset, return_indices=False):
+    """compute the mode, or most frequent occuring label in a set"""
+    index = as_index(pointset)
+    bin = np.argmax(index.count)
+    maxpoint = index.unique[bin]
+    if return_indices:
+        idx = index.sorter[index.start[bin]: index.stop[bin]]
+        return maxpoint, idx
+    else:
+        return maxpoint

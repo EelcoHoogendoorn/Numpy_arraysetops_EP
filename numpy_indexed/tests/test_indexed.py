@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from builtins import *
 
 import pytest
+import numpy.testing as npt
 
 from numpy_indexed import *
 from numpy_indexed.utility import as_struct_array
@@ -216,3 +217,9 @@ def test_count_table():
     l, t = count_table(np.random.randint(0,4,(1000,3)))
     print(l)
     print(t)
+
+
+def test_mode():
+    m, idx = mode([1, 2, 2, 1, 3, 1], True)
+    assert m == 1
+    npt.assert_equal(idx, [0, 3, 5])
