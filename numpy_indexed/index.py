@@ -132,30 +132,29 @@ class Index(BaseIndex):
                 [self.size]))
 
     @property
-    def index(self):
-        """ive never run into any use cases for this;
-        perhaps it was intended to be used to do group_by(keys).first(values)?
-        in any case, included for backwards compatibility with np.unique"""
-        return self.sorter[self.start]
-
-    @property
-    def rank(self):
-        """how high in sorted list each key is"""
-        r = np.empty(self.size, np.int)
-        r[self.sorter] = np.arange(self.size)
-        return r
-
-    @property
     def sorted_group_rank_per_key(self):
         """find a better name for this? enumeration of sorted keys. also used in median implementation"""
         return np.cumsum(np.concatenate(([False], self.flag)))
 
     @property
     def inverse(self):
-        """return index array that maps unique values back to original space"""
+        """return index array that maps unique values back to original space. unique[inverse]==keys"""
         inv = np.empty(self.size, np.int)
         inv[self.sorter] = self.sorted_group_rank_per_key
         return inv
+
+    @property
+    def rank(self):
+        """how high in sorted list each key is. inverse permutation of sorter, such that sorted[rank]==keys"""
+        r = np.empty(self.size, np.int)
+        r[self.sorter] = np.arange(self.size)
+        return r
+
+    @property
+    def index(self):
+        """returns indices such that keys[index]==unique
+        not sure of the use case, but included for backwards compatibility with np.unique"""
+        return self.sorter[self.start]
 
 
 class ObjectIndex(Index):

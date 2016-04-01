@@ -48,39 +48,88 @@ def indices(A, B, axis=semantics.axis_default, assume_contained=False):
 
 
 def count(keys, axis=semantics.axis_default):
-    """
-    numpy work-alike of collections.Counter
-    sparse equivalent of count_table
+    """count the number of times each key occurs in the input set
+
+    Arguments
+    ---------
+    keys : indexable object
+
+    Returns
+    -------
+    unique : ndarray, [groups, ...]
+        unique keys
+    count : ndarray, [groups], int
+        the number of times each key occurs in the input set
+
+    Notes
+    -----
+    Can be seen as numpy work-alike of collections.Counter
+    Alternatively, as sparse equivalent of count_table
     """
     index = as_index(keys, axis, base=True)
     return index.unique, index.count
 
 
 def count_table(*keys):
-    """
-    R's pivot table or pandas 'crosstab'
-    dense equivalent of the count function
+    """count the number of times each key occurs in the input set
+
+    Arguments
+    ---------
+    keys : tuple of indexable objects, each having the same number of items
+
+    Returns
+    -------
+    unique : tuple of ndarray, [groups, ...]
+        unique keys for each input item
+        they form the axes labels of the table
+    table : ndarray, [keys[0].groups, ... keys[n].groups], int
+        the number of times each key-combination occurs in the input set
+
+    Notes
+    -----
+    Equivalent to R's pivot table or pandas 'crosstab'
+    Alternatively, dense equivalent of the count function
     """
     indices  = [as_index(k, axis=0) for k in keys]
     uniques  = [i.unique  for i in indices]
     inverses = [i.inverse for i in indices]
     shape    = [i.groups  for i in indices]
-    t = np.zeros(shape, np.int)
-    np.add.at(t, inverses, 1)
-    return tuple(uniques), t
+    table = np.zeros(shape, np.int)
+    np.add.at(table, inverses, 1)
+    return tuple(uniques), table
 
 
 def multiplicity(keys, axis=semantics.axis_default):
-    """
-    return the multiplicity of each key, or how often it occurs in the set
+    """return the multiplicity of each key, or how often it occurs in the set
+
+    Parameters
+    ----------
+    keys : indexable object
+
+    Returns
+    -------
+    ndarray, [keys.size], int
+        the number of times each input item occurs in the set
     """
     index = as_index(keys, axis)
     return index.count[index.inverse]
 
 
 def rank(keys, axis=semantics.axis_default):
-    """
-    where each item is in the pecking order.
+    """where each item is in the pecking order.
+
+    Parameters
+    ----------
+    keys : indexable object
+
+    Returns
+    -------
+    ndarray, [keys.size], int
+        unique integers, ranking the sorting order
+
+    Notes
+    -----
+    we should have that index.sorted[index.rank] == keys
     """
     index = as_index(keys, axis)
     return index.rank

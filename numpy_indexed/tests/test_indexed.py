@@ -135,20 +135,6 @@ def test_compact():
     print(median)
 
 
-def test_timings():
-    """small performance test"""
-    idx = np.random.randint(0, 1000, 10000)
-    g = group_by(idx)
-    values = np.random.rand(10000, 100)
-    assert (np.allclose(g.at(values), g.reduce(values)))
-
-    from time import clock
-    t = clock()
-    for i in range(100):
-        g.reduce(values)
-    print('reducing with np.add over 1000 groups with 10000x100 values repeated 100 times took %f seconds' % (clock()-t))
-
-
 def test_indices():
     """test indices function"""
     values = np.random.rand(20)

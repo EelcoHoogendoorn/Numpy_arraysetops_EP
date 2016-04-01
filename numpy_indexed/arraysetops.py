@@ -10,8 +10,7 @@ from numpy_indexed import semantics
 
 
 def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse=False, return_count=False):
-    """
-    compute the set of unique keys
+    """compute the set of unique keys
 
     Parameters
     ----------
@@ -28,9 +27,8 @@ def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse
 
     Notes
     -----
-    the kwargs are there to provide a backwards compatible interface to numpy.unique
-    but arguably, it is cleaner to call index and its properties directly,
-    should more than unique values be desired as output
+    The kwargs are there to provide a backwards compatible interface to numpy.unique, but arguably,
+    it is cleaner to call index and its properties directly, should more than unique values be desired as output
     """
     stable = return_index or return_inverse
     index = as_index(keys, axis, base = not stable, stable = stable)
@@ -48,7 +46,6 @@ def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse
 def count_selected(A, B, axis=semantics.axis_default):
     """
     count how often the elements of B occur in A
-    returns an array of unsigned integers, one for each key in B
 
     Parameters
     ----------
@@ -59,15 +56,17 @@ def count_selected(A, B, axis=semantics.axis_default):
     axis : int
         if keys is a multi-dimensional array, the axis to regard as the sequence of key objects
 
+    Returns
+    -------
+    ndarray, [B.size], int
+        the number of times each item in B occurs in A
+
     Notes
     -----
-    should this be a private function, or part of the API?
+    This implementation is perhaps not the most efficient, but it is rather elegant
+    Alternatively, compute intersection, while computing idx to map back to original space
 
-    this is perhaps not the most efficient way of doing it, but it is rather elegant
-    alternatively, compute intersection, while computing idx to map back to original space
-    dont need to as_index first
-
-    can also use searchsorted based approach; diff between left and right interval
+    Perhaps we can also use searchsorted based approach; diff between left and right interval
     """
 
     Ai = as_index(A, axis=axis)
@@ -79,8 +78,7 @@ def count_selected(A, B, axis=semantics.axis_default):
 
 
 def contains(A, B, axis=semantics.axis_default):
-    """
-    test if B is contained in A; 'does A contain B?'
+    """for each item in B, test if it is present in the items of A
 
     Parameters
     ----------
@@ -91,11 +89,12 @@ def contains(A, B, axis=semantics.axis_default):
 
     Returns
     -------
-    a bool array with length of B
+    ndarray, [B.size], bool
+        if each item in B is present in A
 
     Notes
     -----
-    like np.in1d
+    generalization of np.in1d
 
     isnt this better implemented using searchsorted?
     """
@@ -103,9 +102,23 @@ def contains(A, B, axis=semantics.axis_default):
 
 
 def _set_preprocess(sets, **kwargs):
-    """
-    common code for all set operations that has been factored out
-    this should return an index object; simply multi-upcast
+    """upcasts a sequence of indexable objects to Index objets according to the given kwargs
+
+    Parameters
+    ----------
+    sets : iterable of indexable objects
+    axis : int, optional
+        axis to view as item sequence
+    assume_unique : bool, optional
+        if we should assume the items sequence does not contain duplicates
+
+    Returns
+    -------
+    list of Index objects
+
+    Notes
+    -----
+    common preprocessing for all set operations
     """
     axis            = kwargs.get('axis', semantics.axis_default)
     assume_unique   = kwargs.get('assume_unique', False)
@@ -118,8 +131,17 @@ def _set_preprocess(sets, **kwargs):
 
 
 def _set_concatenate(sets):
-    """
-    concat set objects. handles both arrays and tuples of arrays
+    """concatenate indexable objects.
+
+    Parameters
+    ----------
+    sets : iterable of indexable objects
+
+    Returns
+    -------
+    indexable object
+
+    handles both arrays and tuples of arrays
     """
     def con(set):
         # if not all():
@@ -137,32 +159,73 @@ def _set_concatenate(sets):
         return tuple(con(s) for s in zip(*sets))
 
 
-def _set_count(sets, sc, **kwargs):
-    """
-    return the elements which occur sc times over the sequence of sets
+def _set_count(sets, n, **kwargs):
+    """return the elements which occur n times over the sequence of sets
+
+    Parameters
+    ----------
+    sets : iterable of indexable objects
+    n : int
+        number of sets the element should occur in
+
+    Returns
+    -------
+    indexable
+        indexable with all elements that occured in n of the sets
+
+    Notes
+    -----
     used by both exclusive and intersection
     """
     sets = _set_preprocess(sets, **kwargs)
     i = as_index(_set_concatenate(sets), axis=0, base=True)
     # FIXME : this does not work for lex-keys
-    return i.unique[i.count == sc]
+    return i.unique[i.count == n]
 
 
 def union(*sets, **kwargs):
-    """all unique items which occur in any one of the sets"""
+    """all unique items which occur in any one of the sets
+
+    Parameters
+    ----------
+    sets : tuple of indexable objects
+
+    Returns
+    -------
+    union of all items in all sets
+    """
     sets = _set_preprocess(sets, **kwargs)
     return as_index( _set_concatenate(sets), axis=0, base=True).unique
 
 
 def intersection(*sets, **kwargs):
-    """perform intersection on an sequence of sets; items which are in all sets"""
+    """perform intersection on an sequence of sets; items which are in all sets
+
+    Parameters
+    ----------
+    sets : tuple of indexable objects
+
+    Returns
+    -------
+    intersection of all items in all sets
+    """
     return _set_count(sets, len(sets), **kwargs)
 
 
 def exclusive(*sets, **kwargs):
-    """
-    return items which are exclusive to one of the sets;
-    generalization of xor
+    """return items which are exclusive to one of the sets;
+
+    Parameters
+    ----------
+    sets : tuple of indexable objects
+
+    Returns
+    -------
+    items which are exclusive to any one of the sets
+
+    Notes
+    -----
+    this is a generalization of xor
     what to do with repeated items in original sets?
     assume_unique kwarg allows toggling
     """
@@ -170,9 +233,20 @@ def exclusive(*sets, **kwargs):
 
 
 def difference(*sets, **kwargs):
-    """
-    substracts all tail sets from the head set
+    """subtracts all tail sets from the head set
 
+    Parameters
+    ----------
+    sets : tuple of indexable objects
+        first set is the head, from which we subtract
+        other items form the tail, which are subtracted from head
+
+    Returns
+    -------
+    items which are in the head but not in any of the tail sets
+
+    Notes
+    -----
     alt implementation: compute union of tail, then union with head, then use set_count(1)
     """
     head, tail = sets[0], sets[1:]
