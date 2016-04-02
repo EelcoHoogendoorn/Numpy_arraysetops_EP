@@ -10,6 +10,7 @@ setup(
     name=pkg_conf.PKG_NAME,
     version=pkg_conf.get_version(),
     packages=find_packages(),
+    py_modules=['pkg_conf'],
     package_data={
         "{}.data".format(pkg_conf.PKG_ROOT): pkg_conf.DATA_FILES
     },
