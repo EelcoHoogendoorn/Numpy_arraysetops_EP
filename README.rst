@@ -50,7 +50,15 @@ Some brief examples to give an impression hereof:
 Installation
 ------------
 
-conda install numpy-indexed -c eelcohoogendoorn
+.. code:: python
+
+    > conda install numpy-indexed -c eelcohoogendoorn
+
+or
+
+.. code:: python
+
+    > pip install numpy-indexed
 
 Design decisions:
 -----------------

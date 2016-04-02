@@ -44,6 +44,9 @@ def build():
     Builds the conda package
     """
     _print("Building your package now")
+
+    pkg_conf.convert_readme()
+
     sep = ' && '
     # add all required channels
     channels = sep.join('conda config --add channels ' + c for c in pkg_conf.get_channels())
@@ -312,11 +315,12 @@ def release(yes=False, token=None):
     if yes or _confirm(prompt="Do you want to continue?"):
 
         # convert github .md file to pypi .rst file
-        pkg_conf.convert_readme()
 
         try:
             pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip().split()[-1]
-            run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
+            # run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
+            print (pkg_path)
+            build()
             run("anaconda upload {}".format(pkg_path))
         except:
             traceback.print_exc()
