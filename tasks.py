@@ -320,7 +320,6 @@ def release(yes=False, token=None):
             pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip().split()[-1]
             # run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
             print (pkg_path)
-            quit()
             build()
             run("anaconda upload {}".format(pkg_path))
         except:
