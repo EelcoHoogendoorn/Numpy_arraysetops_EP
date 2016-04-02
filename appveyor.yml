@@ -49,7 +49,6 @@ install:
 build_script:
   # There are so many dependencies for the invoke commands that it's easier to use the environment
   - activate numpy_indexed
-  - invoke lint
   - invoke test
   # This does not upload the package, only builds it
   - invoke build
