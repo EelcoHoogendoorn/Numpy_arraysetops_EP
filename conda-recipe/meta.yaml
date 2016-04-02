@@ -4,10 +4,10 @@ about:
   summary: Numpy indexing based extensions, such as group_by
 build:
   noarch_python: true
-  number: 1
+  number: 0
 package:
   name: numpy-indexed
-  version: 0.2.8
+  version: 0.2.dev9
 requirements:
   build:
   - python
