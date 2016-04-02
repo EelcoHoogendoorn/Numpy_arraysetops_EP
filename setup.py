@@ -2,6 +2,12 @@ from setuptools import find_packages
 from distutils.core import setup
 
 import pkg_conf
+import os
+
+
+datadir = os.path.join(pkg_conf.ABS_REPO_ROOT, 'conda-recipe')
+datafiles = [(d, [os.path.join(d,f) for f in files])
+    for d, folders, files in os.walk(datadir)]
 
 
 setup(
@@ -10,9 +16,7 @@ setup(
     version=pkg_conf.get_version(),
     packages=find_packages(),
     py_modules=['pkg_conf'],
-    package_data={
-        "{}.data".format(pkg_conf.PKG_ROOT): pkg_conf.DATA_FILES
-    },
+    data_files=datafiles,
     description=pkg_conf.get_recipe_meta()['about']['summary'],
     long_description=pkg_conf.get_readme_rst(),
     author=pkg_conf.AUTHOR,

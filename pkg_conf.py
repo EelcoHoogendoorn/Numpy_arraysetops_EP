@@ -61,8 +61,10 @@ def get_readme_rst():
 
 def convert_readme():
     import pypandoc
-    with open(os.path.join(ABS_REPO_ROOT, 'README.rst'), "w") as outfile:
-        outfile.write(pypandoc.convert('README.md', 'rst'))
+    pypandoc.convert(
+        os.path.join(ABS_REPO_ROOT, 'README.md'),
+        'rst',
+        outputfile=os.path.join(ABS_REPO_ROOT, 'README.rst'))
 
 
 def get_build_number():
