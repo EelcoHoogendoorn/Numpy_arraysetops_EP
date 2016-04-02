@@ -54,6 +54,17 @@ def get_readme():
     return _cache['readme']
 
 
+def get_readme_rst():
+    with open(os.path.join(ABS_REPO_ROOT, 'README.rst'), "r") as infile:
+        return infile.read()
+
+
+def convert_readme():
+    import pypandoc
+    with open(os.path.join(ABS_REPO_ROOT, 'README.rst'), "w") as outfile:
+        outfile.write(pypandoc.convert('README.md', 'rst'))
+
+
 def get_build_number():
     return get_recipe_meta()["build"]["number"]
 

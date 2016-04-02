@@ -321,6 +321,7 @@ def release(yes=False, token=None):
             return False
 
         try:
+            pkg_conf.convert_readme()
             run("python setup.py sdist upload")
         except:
             traceback.print_exc()

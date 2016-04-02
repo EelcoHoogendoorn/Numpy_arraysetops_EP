@@ -2,7 +2,6 @@ from setuptools import find_packages
 from distutils.core import setup
 
 import pkg_conf
-import pypandoc
 
 
 setup(
@@ -15,7 +14,7 @@ setup(
         "{}.data".format(pkg_conf.PKG_ROOT): pkg_conf.DATA_FILES
     },
     description=pkg_conf.get_recipe_meta()['about']['summary'],
-    long_description=pypandoc.convert('README.md', 'rst'),
+    long_description=pkg_conf.get_readme_rst(),
     author=pkg_conf.AUTHOR,
     author_email=pkg_conf.AUTHOR_EMAIL,
     url=pkg_conf.get_recipe_meta()['about']['home'],
