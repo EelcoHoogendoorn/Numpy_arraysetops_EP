@@ -5,18 +5,12 @@ import pkg_conf
 import os
 
 
-datadir = 'conda-recipe'
-datafiles = [(d, [os.path.join(pkg_conf.ABS_REPO_ROOT, d,f) for f in files])
-    for d, folders, files in os.walk(datadir)]
-
-
 setup(
     keywords = "numpy group_by set-operations indexing",
     name=pkg_conf.PKG_NAME,
     version=pkg_conf.get_version(),
     packages=find_packages(),
     py_modules=['pkg_conf'],
-    data_files=datafiles,
     description=pkg_conf.get_recipe_meta()['about']['summary'],
     long_description=pkg_conf.get_readme_rst(),
     author=pkg_conf.AUTHOR,
