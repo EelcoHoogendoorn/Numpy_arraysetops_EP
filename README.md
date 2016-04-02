@@ -42,7 +42,9 @@ print(group_by(edges[0]).median(values))
 ```
 
 ## Installation
-conda install numpy-indexed -c eelcohoogendoorn
+> pip install numpy-indexed
+or
+> conda install numpy-indexed -c eelcohoogendoorn
 
 ## Design decisions:
 This package builds upon a generalization of the design pattern as can be found in numpy.unique. That is, by argsorting an ndarray, subsequent operations can be implemented efficiently.
