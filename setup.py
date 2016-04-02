@@ -5,8 +5,8 @@ import pkg_conf
 import os
 
 
-datadir = os.path.join(pkg_conf.ABS_REPO_ROOT, 'conda-recipe')
-datafiles = [(d, [os.path.join(d,f) for f in files])
+datadir = 'conda-recipe'
+datafiles = [(d, [os.path.join(pkg_conf.ABS_REPO_ROOT, d,f) for f in files])
     for d, folders, files in os.walk(datadir)]
 
 
