@@ -17,6 +17,8 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  # some required packages
+  - conda install conda-build jinja2 anaconda-client --quiet
   # Useful for debugging any issues with conda
   - conda info -a
 
