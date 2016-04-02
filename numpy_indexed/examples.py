@@ -64,7 +64,7 @@ def test_mesh_solver():
     #we test to see how often each edge occurs, or how many indicent simplices it has
     #this is a very general method of finding the boundary of any topology
     #and we can do so here with only one simple and readable command, multiplicity == 1
-    if backwards_compatible:
+    if semantics.backwards_compatible:
         boundary_edges = edges[multiplicity(sorted_edges, axis=0)==1]
     else:
         boundary_edges = edges[multiplicity(sorted_edges)==1]
