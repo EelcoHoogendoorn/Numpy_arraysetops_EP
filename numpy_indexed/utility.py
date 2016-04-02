@@ -45,7 +45,7 @@ def axis_as_object(arr, axis=-1):
     """
     shape = arr.shape
     # make axis to be viewed as a void object as contiguous items
-    arr = np.ascontiguousarray(np.swapaxes(arr, axis, -1))
+    arr = np.ascontiguousarray(np.rollaxis(arr, axis, arr.ndim))
     # number of bytes in each void object
     nbytes = arr.dtype.itemsize * shape[axis]
     # void type with the correct number of bytes
@@ -75,7 +75,7 @@ def object_as_axis(arr, dtype, axis=-1):
     # view the void objects as typed elements
     arr = arr.view(dtype).reshape(arr.shape + (-1,))
     # put the axis in the specified location
-    return np.swapaxes(arr, axis, -1)
+    return np.rollaxis(arr, -1, axis)
 
 
 def array_as_object(arr):
