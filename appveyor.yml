@@ -38,6 +38,7 @@ install:
   # show_channel_urls: http://conda.pydata.org/docs/config.html#show-channel-urls-show-channel-urls
   # always_yes: http://conda.pydata.org/docs/config.html#always-yes-always-yes
   - conda config --set show_channel_urls True --set always_yes True
+
   # Install the necessary packages
   - conda install conda-build jinja2 anaconda-client --quiet
   # Show us the conda configuration we have right now
