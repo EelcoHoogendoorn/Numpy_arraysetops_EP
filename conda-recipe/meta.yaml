@@ -1,7 +1,7 @@
 about:
   home: https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP
   license: Freely Distributable
-  summary: Numpy indexing based extensions
+  summary: Numpy indexing based extensions, such as group_by
 build:
   noarch_python: true
   number: 1
@@ -14,6 +14,7 @@ requirements:
   - numpy
   - pyyaml 3.11*
   - future 0.15*
+  - pypandoc
   run:
   - python
   - numpy

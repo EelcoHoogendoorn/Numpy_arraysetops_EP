@@ -306,16 +306,22 @@ def release(yes=False, token=None):
     _print("You are about to build and upload version {}, build {} of package {} to user {}".format(
             version, pkg_conf.get_build_number(), pkg_conf.PKG_NAME, pkg_conf.ANACONDA_USER))
     if yes or _confirm(prompt="Do you want to continue?"):
+
         pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip().split()[-1]
         run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
-        print(pkg_path)
-        print(os.path.exists(pkg_path))
         try:
-            print("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
             run("anaconda upload {} --user {}".format(pkg_path, pkg_conf.ANACONDA_USER))
         except:
             traceback.print_exc()
-            _print("Upload failed.")
+            _print("anaconda upload failed.")
             return False
+
+        try:
+            run("python setup.py sdist upload")
+        except:
+            traceback.print_exc()
+            _print("pypi upload failed.")
+            return False
+
         _tag_git_revision("v{}".format(version))
         return True
