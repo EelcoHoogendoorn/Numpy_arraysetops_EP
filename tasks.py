@@ -44,10 +44,14 @@ def build():
     Builds the conda package
     """
     _print("Building your package now")
+    sep = ' && '
+    # add all required channels
+    channels = sep.join('conda config --add channels ' + c for c in pkg_conf.get_channels())
+    command = channels + sep + "conda build conda-recipe --no-anaconda-upload --quiet"
     if on_win32:
-        run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
+        run("deactivate" + sep + command)
     elif on_linux:
-        run("source deactivate && conda build conda-recipe --no-anaconda-upload --quiet", pty=True)
+        run("source deactivate" + sep + command, pty=True)
     else:
         raise NotImplementedError("Building is not supported for this OS")
 

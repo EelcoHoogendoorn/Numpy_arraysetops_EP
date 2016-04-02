@@ -21,6 +21,12 @@ ABS_REPO_ROOT = os.path.dirname(os.path.realpath(__file__))
 _cache = dict()
 
 
+def get_channels():
+    with open(os.path.join(ABS_REPO_ROOT, 'environment.yml'), "r") as infile:
+        environment = yaml.load(infile)
+        return environment['channels']
+
+
 def get_recipe_meta():
     global _cache
     if 'recipe_meta' not in _cache:
