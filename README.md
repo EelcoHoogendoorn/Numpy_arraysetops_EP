@@ -1,5 +1,5 @@
-<img src="https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master">
-<img src="https://ci.appveyor.com/api/projects/status/h7w191ovpa9dcfum?svg=true">
+[![Build Status](https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master)](https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP)
+[![Build status](https://ci.appveyor.com/api/projects/status/h7w191ovpa9dcfum?svg=true)](https://ci.appveyor.com/project/clinicalgraphics/numpy-arraysetops-ep)
 
 Numpy indexed operations
 ====================
