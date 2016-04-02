@@ -1,4 +1,6 @@
 <img src="https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master">
+<img src="https://ci.appveyor.com/api/projects/status/h7w191ovpa9dcfum?svg=true">
+
 Numpy indexed operations
 ====================
 

@@ -27,8 +27,7 @@ def as_struct_array(*columns):
 
 
 def axis_as_object(arr, axis=-1):
-    """
-    cast the given axis of an array to a void object
+    """cast the given axis of an array to a void object
     if the axis to be cast is contiguous, a view is returned, otherwise a copy is made
     this is useful for efficiently sorting by the content of an axis, for instance
 
