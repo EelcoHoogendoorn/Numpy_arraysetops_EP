@@ -311,9 +311,9 @@ def release(yes=False, token=None):
             version, pkg_conf.get_build_number(), pkg_conf.PKG_NAME, run('anaconda whoami').stdout))
     if yes or _confirm(prompt="Do you want to continue?"):
 
-        pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip().split()[-1]
-        run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
         try:
+            pkg_path = run("deactivate && conda build conda-recipe --output", hide='stdout').stdout.strip().split()[-1]
+            run("deactivate && conda build conda-recipe --no-anaconda-upload --quiet")
             run("anaconda upload {}".format(pkg_path))
         except:
             traceback.print_exc()
