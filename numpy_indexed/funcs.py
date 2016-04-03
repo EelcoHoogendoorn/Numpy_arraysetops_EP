@@ -175,7 +175,9 @@ def mode(points, return_indices=False):
 
 def sorted(keys, axis):
     """to be implemented"""
+    raise NotImplementedError
 
 
 def searchsorted():
     """to be implemented"""
+    raise NotImplementedError
