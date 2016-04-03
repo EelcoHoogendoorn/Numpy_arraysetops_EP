@@ -10,7 +10,6 @@ setup(
     name=pkg_conf.PKG_NAME,
     version=pkg_conf.get_version(),
     packages=find_packages(),
-    py_modules=['pkg_conf'],
     description=pkg_conf.get_recipe_meta()['about']['summary'],
     long_description=pkg_conf.get_readme_rst(),
     author=pkg_conf.AUTHOR,

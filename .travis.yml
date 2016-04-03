@@ -30,3 +30,4 @@ script:
   # Your test script goes here
   - invoke test
   - invoke build
+  - python setup.py sdist

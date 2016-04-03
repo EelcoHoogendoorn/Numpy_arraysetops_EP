@@ -6,7 +6,7 @@ import pytest
 import numpy.testing as npt
 
 from numpy_indexed import *
-from numpy_indexed.utility import as_struct_array
+from numpy_indexed.utility import *
 
 
 def test_group_by():
@@ -209,3 +209,12 @@ def test_mode():
     m, idx = mode([1, 2, 2, 1, 3, 1], True)
     assert m == 1
     npt.assert_equal(idx, [0, 3, 5])
+
+
+def test_void_casting():
+    """ensure that axis_as_object and object_as_axis are indeed inverse operations"""
+    dummy = np.random.rand(2, 3, 4)
+    for a in range(dummy.ndim):
+        void = axis_as_object(dummy, a)
+        restored = object_as_axis(void, dummy.dtype, a)
+        assert (np.alltrue(dummy == restored))

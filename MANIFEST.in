@@ -1,1 +1,3 @@
+include pkg_conf.py
+include environment.yml
 recursive-include conda-recipe *.*

@@ -30,9 +30,10 @@ def indices(A, B, axis=semantics.axis_default, assume_contained=False):
     Ai = as_index(A, axis)
     if isinstance(Ai, LexIndex):
         raise ValueError('Composite key objects not supported in indices function')
-    #use this for getting Ai.keys and Bi.keys organized the same way;
-    #sorting is superfluous though. make sorting a cached property?
-    #should we be working with cached properties generally?
+    # use this for getting Ai.keys and Bi.keys organized the same way;
+    # sorting is superfluous though. make sorting a cached property?
+    # should we be working with cached properties generally?
+    # or we should use sorted values, if searchsorted can exploit this knowledge?
     Bi = as_index(B, axis, base=True)
 
     # use raw private keys here, rather than public unpacked keys
@@ -89,6 +90,7 @@ def count_table(*keys):
     -----
     Equivalent to R's pivot table or pandas 'crosstab'
     Alternatively, dense equivalent of the count function
+    Should we add weights option?
     """
     indices  = [as_index(k, axis=0) for k in keys]
     uniques  = [i.unique  for i in indices]
@@ -144,13 +146,36 @@ def incidence(boundary):
     return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])
 
 
-def mode(pointset, return_indices=False):
-    """compute the mode, or most frequent occuring label in a set"""
-    index = as_index(pointset)
+def mode(points, return_indices=False):
+    """compute the mode, or most frequent occuring label in a set
+
+    Parameters
+    ----------
+    points : ndarray, [n_points, ...]
+        input point array. elements of 'points' can have arbitrary shape or dtype
+    return_indices : bool
+        if True, all indices such that points[indices]==mode holds
+
+    Returns
+    -------
+    mode : ndarray, [...]
+        the most frequently occuring item in the point sequence
+    indices : ndarray, [mode_multiplicity], int, optional
+        if return_indices is True, all indices such that points[indices]==mode holds
+    """
+    index = as_index(points)
     bin = np.argmax(index.count)
     maxpoint = index.unique[bin]
     if return_indices:
-        idx = index.sorter[index.start[bin]: index.stop[bin]]
-        return maxpoint, idx
+        indices = index.sorter[index.start[bin]: index.stop[bin]]
+        return maxpoint, indices
     else:
         return maxpoint
+
+
+def sorted(keys, axis):
+    """to be implemented"""
+
+
+def searchsorted():
+    """to be implemented"""

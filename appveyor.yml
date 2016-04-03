@@ -51,8 +51,10 @@ build_script:
   # There are so many dependencies for the invoke commands that it's easier to use the environment
   - activate numpy_indexed
   - invoke test
-  # This does not upload the package, only builds it
+  # build conda package; no upload
   - invoke build
+  # build egg
+  - python setup.py sdist
 
 # after_build:
 #  # archive built package(s)
