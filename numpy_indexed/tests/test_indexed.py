@@ -206,7 +206,7 @@ def test_count_table():
 
 
 def test_mode():
-    m, idx = mode([1, 2, 2, 1, 3, 1], True)
+    m, idx = mode([1, 2, 2, 1, 3, 1], return_indices=True)
     assert m == 1
     npt.assert_equal(idx, [0, 3, 5])
 

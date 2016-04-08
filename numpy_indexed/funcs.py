@@ -4,7 +4,7 @@ from builtins import *
 
 import numpy as np
 
-from numpy_indexed.grouping import GroupBy
+from numpy_indexed.grouping import GroupBy, group_by
 from numpy_indexed.index import LexIndex, as_index
 from numpy_indexed import semantics
 
@@ -146,38 +146,44 @@ def incidence(boundary):
     return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])
 
 
-def mode(points, return_indices=False):
-    """compute the mode, or most frequent occuring label in a set
+def mode(keys, weights=None, return_indices=False):
+    """compute the mode, or most frequent occuring key in a set
 
     Parameters
     ----------
-    points : ndarray, [n_points, ...]
-        input point array. elements of 'points' can have arbitrary shape or dtype
+    keys : ndarray, [n_keys, ...]
+        input array. elements of 'keys' can have arbitrary shape or dtype
+    weights : ndarray, [n_keys], optional
+        if given, the contribution of each key to the mode is weighted by the given weights
     return_indices : bool
-        if True, all indices such that points[indices]==mode holds
+        if True, return all indices such that keys[indices]==mode holds
 
     Returns
     -------
     mode : ndarray, [...]
-        the most frequently occuring item in the point sequence
+        the most frequently occuring key in the key sequence
     indices : ndarray, [mode_multiplicity], int, optional
         if return_indices is True, all indices such that points[indices]==mode holds
     """
-    index = as_index(points)
-    bin = np.argmax(index.count)
-    maxpoint = index.unique[bin]
+    index = as_index(keys)
+    if weights is None:
+        unique, weights = count(index)
+    else:
+        unique, weights = group_by(index).sum(weights)
+    bin = np.argmax(weights)
+    _mode = unique[bin]
     if return_indices:
         indices = index.sorter[index.start[bin]: index.stop[bin]]
-        return maxpoint, indices
+        return _mode, indices
     else:
-        return maxpoint
+        return _mode
 
 
 def sorted(keys, axis):
-    """to be implemented"""
-    raise NotImplementedError
+    """sort an indexable object and return the sorted keys"""
+    return as_index(keys, axis).sorted
 
 
-def searchsorted():
+def searchsorted(keys, axis):
     """to be implemented"""
     raise NotImplementedError
