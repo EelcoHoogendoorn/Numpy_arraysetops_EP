@@ -293,6 +293,7 @@ def _tag_git_revision(revision_tag):
         _print("Tag '{}' applied".format(revision_tag))
     else:
         raise NotImplementedError('should do rollback here')
+    run('git push origin')
 
 
 @task(help={"yes": "Skip confirmation prompt."})
