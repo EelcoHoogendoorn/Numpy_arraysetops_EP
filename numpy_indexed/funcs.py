@@ -184,6 +184,11 @@ def sorted(keys, axis):
     return as_index(keys, axis).sorted
 
 
-def searchsorted(keys, axis):
+def argsort(keys, axis):
+    """return the indices that will place the keys in sorted order"""
+    return as_index(keys, axis).sorter
+
+
+def searchsorted(keys, axis, side='left', sorter=None):
     """to be implemented"""
     raise NotImplementedError
