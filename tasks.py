@@ -5,12 +5,17 @@ import os
 import shutil
 import traceback
 import subprocess
-
-from invoke import task, run
-
 import pkg_conf
 import sys
 import yaml
+
+from invoke import task, run
+
+
+__author__ = "Ivo Flipse, Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
+
 
 # variables used to build documentation and package according to OS
 on_win32 = sys.platform.startswith("win")
