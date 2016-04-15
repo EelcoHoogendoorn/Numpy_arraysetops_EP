@@ -9,17 +9,32 @@ from numpy_indexed.index import LexIndex, as_index
 from numpy_indexed import semantics
 
 
-def indices(A, B, axis=semantics.axis_default, assume_contained=False):
-    """
-    vectorized numpy equivalent of list.index
-    find indices such that np.all( A[indices] == B)
+def indices(A, B, axis=semantics.axis_default, missing='raise'):
+    """vectorized numpy equivalent of list.index
+    find indices such that A[indices] == B
+
+    Paramaters
+    ----------
+    A : indexable object
+        items to search in
+    B : indexable object
+        items to search for
+    missing : {'raise', 'ignore', 'mask'}
+        if missing is 'raise', a KeyError is raised if not all elements of B are present in A
+        if missing is 'ignore', all elements of B are assumed to be present in A, and output is undefined otherwise
+        if missing is 'mask', a masked array is returned, containing only the indices found
+
+    Returns
+    -------
+    indices : ndarray, [B.size], int
+        indices such that A[indices] == B
+
+    Notes
+    -----
     as of yet, does not work on lexindex
     could it ever? would need lex-compatible searchsorted
     perhaps we could cast the lexindex to a struct array,
     but this is better left to the user i feel
-
-    if assume_contained==true, it is assumed that the values in B are indeed present in A
-    if not, a key error is raised in case a value is missing
 
     is using searchedsorted(sorter) wise? or is creating a sorted copy and inverting index more cache friendly?
     probably sepends on the size of values. otoh, binary search has poor cache coherence anyway
@@ -38,12 +53,14 @@ def indices(A, B, axis=semantics.axis_default, assume_contained=False):
 
     # use raw private keys here, rather than public unpacked keys
     insertion = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
+    indices = np.take(Ai.sorter, insertion, mode='clip')
 
-    indices = Ai.sorter[insertion]
-
-    if not assume_contained:
-        if not np.alltrue(A[indices] == B):
+    if missing != 'ignore':
+        valid = np.array_equal(A[indices], B)
+        if missing == 'raise' and not np.all(valid):
             raise KeyError('Not all keys in B are present in A')
+        if missing == 'mask':
+            indices = np.ma.masked_array(indices, ~valid)
 
     return indices
 
@@ -137,15 +154,6 @@ def rank(keys, axis=semantics.axis_default):
     return index.rank
 
 
-def incidence(boundary):
-    """
-    given an Nxm matrix containing boundary info between simplices,
-    compute indidence info matrix
-    not very reusable; should probably not be in this lib
-    """
-    return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])
-
-
 def mode(keys, weights=None, return_indices=False):
     """compute the mode, or most frequent occuring key in a set
 
@@ -192,3 +200,12 @@ def argsort(keys, axis):
 def searchsorted(keys, axis, side='left', sorter=None):
     """to be implemented"""
     raise NotImplementedError
+
+
+def incidence(boundary):
+    """
+    given an Nxm matrix containing boundary info between simplices,
+    compute indidence info matrix
+    not very reusable; should probably not be in this lib
+    """
+    return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])

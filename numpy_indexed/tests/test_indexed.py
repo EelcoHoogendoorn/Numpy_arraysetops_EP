@@ -143,7 +143,7 @@ def test_indices():
     assert(np.alltrue(indices(values, values[idx]) == idx))
     assert(np.alltrue(contains(values, values[idx])))
     with pytest.raises(KeyError):
-        indices(values, [-1], assume_contained=False)
+        indices(values, [-1])
 
 
 def test_indices_object():
@@ -155,6 +155,10 @@ def test_indices_object():
          [0, 2]])
     B = np.array([[0, 2]])
     assert np.alltrue(indices(A, B) == 1)
+    B = np.array([[1, 2]])
+    with pytest.raises(KeyError):
+        indices(A, B)
+    assert len(indices(A, B, missing='mask').compressed()) == 0
 
 
 def test_setops_edgecase():
