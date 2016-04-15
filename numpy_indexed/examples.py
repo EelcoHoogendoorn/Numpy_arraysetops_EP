@@ -1,13 +1,15 @@
-"""
-examples:
+"""some more complex examples of actual use cases than found in unit tests"""
 
-some more complex examples of actual use cases than found in unit tests
-"""
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
 
 import matplotlib.pyplot as plt
 from numpy_indexed import *
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
 
 
 def test_radial_reduction():

@@ -3,6 +3,11 @@
 import numpy as np
 
 
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
+
+
 def as_struct_array(*columns):
     """pack a sequence of columns into a recarray
 

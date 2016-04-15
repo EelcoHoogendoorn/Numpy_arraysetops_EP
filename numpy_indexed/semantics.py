@@ -7,6 +7,13 @@ whereby multi-dimensional arrays are simply interpreted as sequences of (complex
 
 For reasons of backwards compatibility, one may prefer the same semantics as numpy 1.x though
 """
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
+
+
 backwards_compatible = False
 if backwards_compatible:
     axis_default = None

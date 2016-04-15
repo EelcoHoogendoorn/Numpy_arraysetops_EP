@@ -8,6 +8,11 @@ import numpy as np
 from numpy_indexed.index import as_index
 
 
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
+
+
 class GroupBy(object):
     """
     GroupBy class

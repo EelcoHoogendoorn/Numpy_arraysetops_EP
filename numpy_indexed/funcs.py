@@ -1,4 +1,6 @@
-"""some useful functions of arraysetops type not currently present in numpy"""
+"""This module implements useful functionality on top of the Index class,
+which is not currently present in numpy"""
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
 
@@ -7,6 +9,11 @@ import numpy as np
 from numpy_indexed.grouping import GroupBy, group_by
 from numpy_indexed.index import LexIndex, as_index
 from numpy_indexed import semantics
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
 
 
 def indices(A, B, axis=semantics.axis_default, missing='raise'):

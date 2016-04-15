@@ -1,20 +1,14 @@
-"""
-class hierarchy for indexing a set of keys
-the class hierarchy allows for code reuse, while providing specializations for different types of key objects
+"""class hierarchy for indexing a set of keys
 
 A note on naming: 'Index' here refers to the fact that the goal of these classes is to
-perform and store precomputations on a set of keys,
-such as to accelerate subsequent operations involving these keys.
-They are not 'logical' indexes as in pandas;
-they are not permanently associated with any other data objects
+perform and store precomputations on a set of keys, such as to accelerate subsequent operations involving these keys.
+They are not 'logical' indexes as in pandas; they are not permanently associated with any other data objects
 
-Note that these classes are not primarily intended to be used directly from the numpy namespace,
-but rather are intended for code reuse within a family of higher level operations,
-only the latter need to be part of the numpy API.
+Note that these classes are not primarily intended to be used directly from the numpy_indexed namespace,
+but rather are intended for code reuse within a family of higher level operations.
 
-That said, these classes can also be very useful
-in those places where the standard operations do not quite cover your needs,
-saving your from completely reinventing the wheel.
+That said, these classes can also be very useful by themselves, in those places where the standard operations
+do not quite cover your needs, saving your from completely reinventing the wheel.
 
 notes:
     do we need to work more with cached properties here?
@@ -23,8 +17,7 @@ notes:
 
     do we need to give index a stable flag?
     for grouping, stable sort is generally desirable,
-    wehreas for set operations, we are better off using the fastest sort
-
+    whereas for set operations, we are better off using the fastest sort
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
@@ -32,6 +25,11 @@ from functools import reduce
 
 from numpy_indexed.utility import *
 from numpy_indexed import semantics
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
 
 
 class BaseIndex(object):

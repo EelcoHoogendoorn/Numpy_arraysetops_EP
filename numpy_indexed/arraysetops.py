@@ -1,5 +1,7 @@
-"""
-this is a rewrite of numpy arraysetops module using the indexing class hierarchy
+"""this is a rewrite of numpy arraysetops module using the indexing class hierarchy.
+
+the main purpose is to expand functionality to multidimensional arrays,
+but it also is much more readable and more DRY than numpy.arraysetops
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
@@ -7,6 +9,11 @@ from builtins import *
 from numpy_indexed.funcs import *
 from numpy_indexed.index import *
 from numpy_indexed import semantics
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
 
 
 def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse=False, return_count=False):
