@@ -63,11 +63,11 @@ def indices(A, B, axis=semantics.axis_default, missing='raise'):
     indices = np.take(Ai.sorter, insertion, mode='clip')
 
     if missing != 'ignore':
-        valid = np.array_equal(A[indices], B)
-        if missing == 'raise' and not np.all(valid):
+        invalid = Ai._keys[indices] != Bi._keys
+        if missing == 'raise' and np.any(invalid):
             raise KeyError('Not all keys in B are present in A')
         if missing == 'mask':
-            indices = np.ma.masked_array(indices, ~valid)
+            indices = np.ma.masked_array(indices, invalid)
 
     return indices
 

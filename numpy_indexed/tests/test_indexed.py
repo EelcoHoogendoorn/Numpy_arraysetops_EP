@@ -1,4 +1,7 @@
-"""unit tests"""
+"""unit tests.
+many functions could still do with better test coverage!
+"""
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
 
@@ -7,6 +10,11 @@ import numpy.testing as npt
 
 from numpy_indexed import *
 from numpy_indexed.utility import *
+
+
+__author__ = "Eelco Hoogendoorn"
+__license__ = "LGPL"
+__email__ = "hoogendoorn.eelco@gmail.com"
 
 
 def test_group_by():
@@ -158,7 +166,10 @@ def test_indices_object():
     B = np.array([[1, 2]])
     with pytest.raises(KeyError):
         indices(A, B)
-    assert len(indices(A, B, missing='mask').compressed()) == 0
+    B = np.array(
+        [[0, 2],
+         [1, 2]])
+    assert len(indices(A, B, missing='mask').compressed()) == 1
 
 
 def test_setops_edgecase():
