@@ -161,7 +161,7 @@ def rank(keys, axis=semantics.axis_default):
     return index.rank
 
 
-def mode(keys, weights=None, return_indices=False):
+def mode(keys, axis=semantics.axis_default, weights=None, return_indices=False):
     """compute the mode, or most frequent occuring key in a set
 
     Parameters
@@ -180,7 +180,7 @@ def mode(keys, weights=None, return_indices=False):
     indices : ndarray, [mode_multiplicity], int, optional
         if return_indices is True, all indices such that points[indices]==mode holds
     """
-    index = as_index(keys)
+    index = as_index(keys, axis)
     if weights is None:
         unique, weights = count(index)
     else:
@@ -194,17 +194,17 @@ def mode(keys, weights=None, return_indices=False):
         return _mode
 
 
-def sorted(keys, axis):
+def sort(keys, axis=semantics.axis_default):
     """sort an indexable object and return the sorted keys"""
     return as_index(keys, axis).sorted_keys
 
 
-def argsort(keys, axis):
+def argsort(keys, axis=semantics.axis_default):
     """return the indices that will place the keys in sorted order"""
     return as_index(keys, axis).sorter
 
 
-def searchsorted(keys, axis, side='left', sorter=None):
+def searchsorted(keys, axis=semantics.axis_default, side='left', sorter=None):
     """to be implemented"""
     raise NotImplementedError
 
@@ -224,24 +224,24 @@ def all_unique(keys, axis=semantics.axis_default):
     return index.groups == index.size
 
 
-def any_unique(keys, axis):
+def any_unique(keys, axis=semantics.axis_default):
     """returns true if any of the keys is unique"""
     index = as_index(keys, axis)
     return np.any(index.count == 1)
 
 
-def any_equal(keys, axis):
+def any_equal(keys, axis=semantics.axis_default):
     """return true if any of the keys equals another; or if not all the keys are unique"""
     return not all_unique(keys, axis)
 
 
-def all_equal(keys, axis):
+def all_equal(keys, axis=semantics.axis_default):
     """returns true of all keys are equal"""
     index = as_index(keys, axis)
-    return index.size == 1
+    return index.groups == 1
 
 
-def is_uniform(keys, axis):
+def is_uniform(keys, axis=semantics.axis_default):
     """returns true if all keys have equal multiplicity"""
     index = as_index(keys, axis)
     return index.uniform

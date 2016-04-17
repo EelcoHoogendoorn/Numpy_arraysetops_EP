@@ -235,6 +235,24 @@ def test_void_casting():
         assert (np.alltrue(dummy == restored))
 
 
-def test_all_unique():
+def test_all_any_unique():
     assert all_unique([1, 2, 2, 1, 3, 1]) == False
     assert all_unique(np.eye(3)) == True
+    assert any_unique([1, 2, 2, 1, 3, 1]) == True
+    assert any_unique([1, 1, 1]) == False
+
+
+def test_all_any_equal():
+    assert all_equal([1, 2, 2, 1, 3, 1]) == False
+    assert all_equal([1, 1, 1]) == True
+    assert any_equal([1, 2, 2, 1, 3, 1]) == True
+    assert any_equal(np.eye(3)) == False
+
+
+def test_sorted():
+    arr = np.random.rand(20)
+    npt.assert_equal(sort(arr), np.sort(arr))
+    arr = np.arange(20).reshape(10, 2)
+    npt.assert_equal(sort(arr[::-1]), arr)
+    a, b = np.random.permutation(arr).T
+    npt.assert_equal(sort((a, b)), arr.T)
