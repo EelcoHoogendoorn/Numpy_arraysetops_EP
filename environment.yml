@@ -3,6 +3,7 @@ channels:
   - anaconda
   - clinicalgraphics
   - BjornFJohansson
+  - janschulz
 dependencies:
   - python
   - numpy
