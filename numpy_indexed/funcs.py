@@ -196,7 +196,7 @@ def mode(keys, weights=None, return_indices=False):
 
 def sorted(keys, axis):
     """sort an indexable object and return the sorted keys"""
-    return as_index(keys, axis).sorted
+    return as_index(keys, axis).sorted_keys
 
 
 def argsort(keys, axis):
@@ -216,3 +216,32 @@ def incidence(boundary):
     not very reusable; should probably not be in this lib
     """
     return GroupBy(boundary).split(np.arange(boundary.size) // boundary.shape[1])
+
+
+def all_unique(keys, axis=semantics.axis_default):
+    """Returns true if all keys are unique"""
+    index = as_index(keys, axis)
+    return index.groups == index.size
+
+
+def any_unique(keys, axis):
+    """returns true if any of the keys is unique"""
+    index = as_index(keys, axis)
+    return np.any(index.count == 1)
+
+
+def any_equal(keys, axis):
+    """return true if any of the keys equals another; or if not all the keys are unique"""
+    return not all_unique(keys, axis)
+
+
+def all_equal(keys, axis):
+    """returns true of all keys are equal"""
+    index = as_index(keys, axis)
+    return index.size == 1
+
+
+def is_uniform(keys, axis):
+    """returns true if all keys have equal multiplicity"""
+    index = as_index(keys, axis)
+    return index.uniform

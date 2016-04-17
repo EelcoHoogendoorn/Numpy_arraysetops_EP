@@ -62,6 +62,10 @@ class BaseIndex(object):
         return self._keys
 
     @property
+    def sorted_keys(self):
+        return self.sorted
+
+    @property
     def size(self):
         """number of keys"""
         return self._keys.size
@@ -182,10 +186,14 @@ class ObjectIndex(Index):
         return np.swapaxes(keys, self.axis, 0)
 
     @property
+    def sorted_keys(self):
+        sorted_keys = array_as_typed(self.sorted, self.dtype, self.shape)
+        return np.swapaxes(sorted_keys, self.axis, 0)
+
+    @property
     def unique(self):
         """the first entry of each bin is a unique key"""
-        sorted = array_as_typed(self.sorted, self.dtype, self.shape)
-        return np.swapaxes(sorted[self.start], self.axis, 0)
+        return self.sorted_keys.take(self.start, self.axis)
 
 
 class LexIndex(Index):

@@ -162,7 +162,7 @@ def test_indices_object():
          [1, 1],
          [0, 2]])
     B = np.array([[0, 2]])
-    assert np.alltrue(indices(A, B) == 1)
+    assert indices(A, B) == 1
     B = np.array([[1, 2]])
     with pytest.raises(KeyError):
         indices(A, B)
@@ -233,3 +233,8 @@ def test_void_casting():
         void = axis_as_object(dummy, a)
         restored = object_as_axis(void, dummy.dtype, a)
         assert (np.alltrue(dummy == restored))
+
+
+def test_all_unique():
+    assert all_unique([1, 2, 2, 1, 3, 1]) == False
+    assert all_unique(np.eye(3)) == True
