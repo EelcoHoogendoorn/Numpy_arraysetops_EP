@@ -172,6 +172,16 @@ def test_indices_object():
     assert len(indices(A, B, missing='mask').compressed()) == 1
 
 
+def test_indices_lex():
+    k1 = ["e", "b", "b", "c", "d", "e", "c", 'a']
+    k2 = ["b", "b", "c", "d", "e", "e", 'e', 'e']
+    values = [1.2, 4.5, 4.3, 2.0, 5.6, 8.8, 9.1, 1]
+
+    npt.assert_equal(indices((k1, k2), (k1, k2)), np.arange(len(k1)))
+    with pytest.raises(KeyError):
+        indices((k1, k2), (['d'],['a']))
+
+
 def test_setops_edgecase():
     """test some edge cases like zero-length, etc"""
     assert np.array_equal(intersection([1], [1]), [1])

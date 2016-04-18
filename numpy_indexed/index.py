@@ -218,7 +218,7 @@ class LexIndex(Index):
         #find indices which sort the keys; complex keys which lexsort does not accept are bootstrapped from Index
         self.sorter = np.lexsort(tuple(Index(key, stable).inverse if key.dtype.kind == 'V' else key for key in keyviews))
         #computed sorted keys
-        self.sorted = tuple(key[self.sorter] for key in keyviews)
+        self.sorted = self.take(keyviews, self.sorter)
         #the slicing points of the bins to reduce over
         if self.size == 0:
             self.flag = np.empty(0, np.bool)
@@ -242,6 +242,13 @@ class LexIndex(Index):
     @property
     def size(self):
         return self.sorter.size
+
+    def take(self, keys, indices):
+        return tuple(key[indices] for key in keys)
+
+    def concatenate(self, *others):
+        return
+
 
 
 class LexIndexSimple(Index):
@@ -278,7 +285,7 @@ class LexIndexSimple(Index):
         return self.sorter.size
 
 
-def as_index(keys, axis = semantics.axis_default, base=False, stable=True):
+def as_index(keys, axis=semantics.axis_default, base=False, stable=True, lex_as_struct=False):
     """
     casting rules for a keys object to an index object
 
@@ -300,7 +307,10 @@ def as_index(keys, axis = semantics.axis_default, base=False, stable=True):
         else:
             return keys         #already done here
     if isinstance(keys, tuple):
-        return LexIndex(keys, stable)
+        if lex_as_struct:
+            keys = as_struct_array(*keys)
+        else:
+            return LexIndex(keys, stable)
 
     try:
         keys = np.asarray(keys)

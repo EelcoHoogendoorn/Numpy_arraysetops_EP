@@ -35,28 +35,13 @@ def indices(A, B, axis=semantics.axis_default, missing='raise'):
     -------
     indices : ndarray, [B.size], int
         indices such that A[indices] == B
-
-    Notes
-    -----
-    as of yet, does not work on lexindex
-    could it ever? would need lex-compatible searchsorted
-    perhaps we could cast the lexindex to a struct array,
-    but this is better left to the user i feel
-
-    is using searchedsorted(sorter) wise? or is creating a sorted copy and inverting index more cache friendly?
-    probably sepends on the size of values. otoh, binary search has poor cache coherence anyway
     """
-    A = np.asarray(A)
-    B = np.asarray(B)
-
-    Ai = as_index(A, axis)
-    if isinstance(Ai, LexIndex):
-        raise ValueError('Composite key objects not supported in indices function')
+    Ai = as_index(A, axis, lex_as_struct=True)
     # use this for getting Ai.keys and Bi.keys organized the same way;
     # sorting is superfluous though. make sorting a cached property?
     # should we be working with cached properties generally?
     # or we should use sorted values, if searchsorted can exploit this knowledge?
-    Bi = as_index(B, axis, base=True)
+    Bi = as_index(B, axis, base=True, lex_as_struct=True)
 
     # use raw private keys here, rather than public unpacked keys
     insertion = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
@@ -186,7 +171,7 @@ def mode(keys, axis=semantics.axis_default, weights=None, return_indices=False):
     else:
         unique, weights = group_by(index).sum(weights)
     bin = np.argmax(weights)
-    _mode = unique[bin]
+    _mode = unique[bin]     # FIXME: replace with index.take for lexindex compatibility?
     if return_indices:
         indices = index.sorter[index.start[bin]: index.stop[bin]]
         return _mode, indices
