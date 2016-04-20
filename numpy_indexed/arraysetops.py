@@ -151,8 +151,9 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
 
     if missing != 'ignore':
         invalid = this._keys[indices] != that._keys
-        if missing == 'raise' and np.any(invalid):
-            raise KeyError('Not all keys in `that` are present in `this`')
+        if missing == 'raise':
+            if np.any(invalid):
+                raise KeyError('Not all keys in `that` are present in `this`')
         elif missing == 'mask':
             indices = np.ma.masked_array(indices, invalid)
         else:
