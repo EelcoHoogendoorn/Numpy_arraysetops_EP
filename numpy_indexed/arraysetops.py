@@ -1,7 +1,7 @@
-"""this is a rewrite of numpy arraysetops module using the indexing class hierarchy.
+"""this is a rewrite and extension of numpy arraysetops module using the indexing class hierarchy.
 
 the main purpose is to expand functionality to multidimensional arrays,
-but it also is much more readable and more DRY than numpy.arraysetops
+but it also is much more readable and DRY than numpy.arraysetops
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import *
@@ -50,62 +50,114 @@ def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse
     return ret[0] if len(ret) == 1 else ret
 
 
-def count_selected(A, B, axis=semantics.axis_default):
-    """
-    count how often the elements of B occur in A
+def contains(this, that, axis=semantics.axis_default):
+    """Returns the index of each element of `that` which is contained in `this`
 
     Parameters
     ----------
-    A : indexable key object
-        items to do lookup in
-    B : indexable key object
-        items to look up in A
-    axis : int
-        if keys is a multi-dimensional array, the axis to regard as the sequence of key objects
+    this : indexable key sequence
+        sequence of items to test against
+    that : indexable key sequence
+        sequence of items to test for
 
     Returns
     -------
-    ndarray, [B.size], int
-        the number of times each item in B occurs in A
+    ndarray, [n], int
+        the index of each element of `that` which is present in `this`
 
     Notes
     -----
-    This implementation is perhaps not the most efficient, but it is rather elegant
-    Alternatively, compute intersection, while computing idx to map back to original space
-
-    Perhaps we can also use searchsorted based approach; diff between left and right interval
+    Reads as 'this contains that'
+    Similar to 'that in this', but with different performance characteristics
     """
+    this = as_index(this, axis=axis, lex_as_struct=True, base=True)
+    that = as_index(that, axis=axis, lex_as_struct=True)
 
-    Ai = as_index(A, axis=axis)
-    Bi = as_index(B, axis=axis)
+    left = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='left')
+    right = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='right')
 
-    query_multiplicity = multiplicity(Bi, axis=0)
-    joint_multiplicity = multiplicity(_set_concatenate((Bi.keys, Ai.keys)), axis=0)[:Bi.size]
-    return joint_multiplicity - query_multiplicity
+    flags = np.zeros(that.size + 1, np.int32)
+    flags[left] += 1
+    flags[right] -= 1
+
+    return that.sorter[np.cumsum(flags)[:-1].astype(np.bool)]
 
 
-def contains(A, B, axis=semantics.axis_default):
-    """for each item in B, test if it is present in the items of A
+def in_(this, that, axis=semantics.axis_default):
+    """Returns bool for each element of `this`, indicating if it is present in `that`
 
     Parameters
     ----------
-    A : indexable key sequence
+    this : indexable key sequence
+        sequence of items to test for
+    that : indexable key sequence
+        sequence of items to test against
+
+    Returns
+    -------
+    ndarray, [that.size], bool
+        returns a bool for each element in `this`, indicating if it is present in `that`
+
+    Notes
+    -----
+    Reads as 'this in that'
+    Similar to 'that contains this', but with different performance characteristics
+    """
+    this = as_index(this, axis=axis, lex_as_struct=True, base=True)
+    that = as_index(that, axis=axis, lex_as_struct=True)
+
+    left = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='left')
+    right = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='right')
+
+    return left != right
+
+
+def indices(this, that, axis=semantics.axis_default, missing='raise'):
+    """Find indices such that this[indices] == that
+    If multiple indices satisfy this condition, the first index found is returned
+
+    Parameters
+    ----------
+    this : indexable object
         items to search in
-    B : indexable key sequence
+    that : indexable object
         items to search for
+    missing : {'raise', 'ignore', 'mask'}
+        if `missing` is 'raise', a KeyError is raised if not all elements of `that` are present in `this`
+        if `missing` is 'mask', a masked array is returned,
+        where items of `that` not present in `this` are masked out
+        if `missing` is 'ignore', all elements of `that` are assumed to be present in `this`,
+        and output is undefined otherwise
 
     Returns
     -------
-    ndarray, [B.size], bool
-        if each item in B is present in A
+    indices : ndarray, [that.size], int
+        indices such that this[indices] == that
 
     Notes
     -----
-    generalization of np.in1d
-
-    isnt this better implemented using searchsorted?
+    May be regarded as a vectorized numpy equivalent of list.index
     """
-    return count_selected(A, B, axis=axis) > 0
+    this = as_index(this, axis=axis, lex_as_struct=True)
+    # use this for getting this.keys and that.keys organized the same way;
+    # sorting is superfluous though. make sorting a cached property?
+    # should we be working with cached properties generally?
+    # or we should use sorted values, if searchsorted can exploit this knowledge?
+    that = as_index(that, axis=axis, base=True, lex_as_struct=True)
+
+    # use raw private keys here, rather than public unpacked keys
+    insertion = np.searchsorted(this._keys, that._keys, sorter=this.sorter, side='left')
+    indices = np.take(this.sorter, insertion, mode='clip')
+
+    if missing != 'ignore':
+        invalid = this._keys[indices] != that._keys
+        if missing == 'raise' and np.any(invalid):
+            raise KeyError('Not all keys in `that` are present in `this`')
+        elif missing == 'mask':
+            indices = np.ma.masked_array(indices, invalid)
+        else:
+            raise ValueError("Invalid value for `missing` argument; must be 'raise', 'mask' or 'ignore'.")
+    return indices
 
 
 def _set_preprocess(sets, **kwargs):
@@ -263,4 +315,4 @@ def difference(*sets, **kwargs):
     return exclusive(lhs, *rhs, axis=0, assume_unique=True)
 
 
-__all__ = ['unique', 'count_selected', 'contains', 'union', 'intersection', 'exclusive', 'difference']
+__all__ = ['unique', 'contains', 'in_', 'indices', 'union', 'intersection', 'exclusive', 'difference']

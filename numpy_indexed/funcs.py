@@ -16,47 +16,6 @@ __license__ = "LGPL"
 __email__ = "hoogendoorn.eelco@gmail.com"
 
 
-def indices(A, B, axis=semantics.axis_default, missing='raise'):
-    """vectorized numpy equivalent of list.index
-    find indices such that A[indices] == B
-
-    Paramaters
-    ----------
-    A : indexable object
-        items to search in
-    B : indexable object
-        items to search for
-    missing : {'raise', 'ignore', 'mask'}
-        if missing is 'raise', a KeyError is raised if not all elements of B are present in A
-        if missing is 'ignore', all elements of B are assumed to be present in A, and output is undefined otherwise
-        if missing is 'mask', a masked array is returned, containing only the indices found
-
-    Returns
-    -------
-    indices : ndarray, [B.size], int
-        indices such that A[indices] == B
-    """
-    Ai = as_index(A, axis, lex_as_struct=True)
-    # use this for getting Ai.keys and Bi.keys organized the same way;
-    # sorting is superfluous though. make sorting a cached property?
-    # should we be working with cached properties generally?
-    # or we should use sorted values, if searchsorted can exploit this knowledge?
-    Bi = as_index(B, axis, base=True, lex_as_struct=True)
-
-    # use raw private keys here, rather than public unpacked keys
-    insertion = np.searchsorted(Ai._keys, Bi._keys, sorter=Ai.sorter, side='left')
-    indices = np.take(Ai.sorter, insertion, mode='clip')
-
-    if missing != 'ignore':
-        invalid = Ai._keys[indices] != Bi._keys
-        if missing == 'raise' and np.any(invalid):
-            raise KeyError('Not all keys in B are present in A')
-        if missing == 'mask':
-            indices = np.ma.masked_array(indices, invalid)
-
-    return indices
-
-
 def count(keys, axis=semantics.axis_default):
     """count the number of times each key occurs in the input set
 

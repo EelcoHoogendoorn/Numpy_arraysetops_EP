@@ -149,7 +149,6 @@ def test_indices():
     idx = [1, 2, 5, 7]
 
     assert(np.alltrue(indices(values, values[idx]) == idx))
-    assert(np.alltrue(contains(values, values[idx])))
     with pytest.raises(KeyError):
         indices(values, [-1])
 
@@ -186,10 +185,6 @@ def test_setops_edgecase():
     """test some edge cases like zero-length, etc"""
     assert np.array_equal(intersection([1], [1]), [1])
     assert np.array_equal(intersection([], []), [])
-
-    assert np.array_equal(count_selected([], []), [])
-    # test repeating values in both arguments
-    assert np.array_equal(count_selected([1, 2, 3, 1], [1, 1, 2]), [2, 2, 1])
 
     assert np.array_equal(difference([1], []), [1])
     assert difference([1], []).dtype == np.int
@@ -266,3 +261,16 @@ def test_sorted():
     npt.assert_equal(sort(arr[::-1]), arr)
     a, b = np.random.permutation(arr).T
     npt.assert_equal(sort((a, b)), arr.T)
+
+
+def test_containment_relations():
+    this = [1, 1, 1]
+    that = [1, 2, 2, 1, 3, 1]
+    npt.assert_equal(in_(this, that), True)
+    npt.assert_equal(contains(that, this), np.arange(3))
+
+    npt.assert_equal(contains(this, []), [])
+    npt.assert_equal(contains([], that), [])
+
+    npt.assert_equal(in_(this, []), False)
+    npt.assert_equal(in_([], that), [])
