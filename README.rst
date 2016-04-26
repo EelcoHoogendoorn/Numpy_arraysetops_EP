@@ -7,23 +7,24 @@ This package contains functionality for indexed operations on numpy
 ndarrays, providing efficient vectorized functionality such as grouping
 and set operations.
 
-*  Rich and efficient grouping functionality:
-   -  splitting of values by key-group
-   -  reductions of values by key-group
+* Rich and efficient grouping functionality:
+  - splitting of values by key-group
+  - reductions of values by key-group
 
-*  Generalization of existing array set operation to nd-arrays, such as:
-   -  unique
-   -  union
-   -  difference
-   -  exclusive (xor)
-   -  contains / in_ (in1d)
+* Generalization of existing array set operation to nd-arrays, such as:
+  - unique
+  - union
+  - difference
+  - exclusive (xor)
+  - contains / in_ (in1d)
 
-*  Some new functions:
-   -  indices: numpy equivalent of list.index
-   -  count: numpy equivalent of collections.Counter
-   -  mode: find the most frequently occuring items in a set
-   -  multiplicity: number of occurrences of each key in a sequence
-   -  count\_table: like R's table or pandas crosstab, or an ndim version of np.bincount
+* Some new functions:
+  - indices: numpy equivalent of list.index
+  - count: numpy equivalent of collections.Counter
+  - mode: find the most frequently occuring items in a set
+  - multiplicity: number of occurrences of each key in a sequence
+  - count\_table: like R's table or pandas crosstab, or an ndim version
+    of np.bincount
 
 Some brief examples to give an impression hereof:
 
@@ -78,8 +79,8 @@ objects, see as\_index().
 Todo and open questions:
 ------------------------
 
--  There may be further generalizations that could be built on top of
-   these abstractions. merge/join functionality perhaps?
+- There may be further generalizations that could be built on top of
+  these abstractions. merge/join functionality perhaps?
 
 .. |Build Status| image:: https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master
    :target: https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP
