@@ -7,18 +7,18 @@ This package contains functionality for indexed operations on numpy
 ndarrays, providing efficient vectorized functionality such as grouping
 and set operations.
 
--  Rich and efficient grouping functionality:
+*  Rich and efficient grouping functionality:
    -  splitting of values by key-group
    -  reductions of values by key-group
 
--  Generalization of existing array set operation to nd-arrays, such as:
+*  Generalization of existing array set operation to nd-arrays, such as:
    -  unique
    -  union
    -  difference
    -  exclusive (xor)
    -  contains / in_ (in1d)
 
--  Some new functions:
+*  Some new functions:
    -  indices: numpy equivalent of list.index
    -  count: numpy equivalent of collections.Counter
    -  mode: find the most frequently occuring items in a set
