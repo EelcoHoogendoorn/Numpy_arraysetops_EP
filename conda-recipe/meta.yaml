@@ -8,7 +8,7 @@ build:
   number: 1
 package:
   name: numpy-indexed
-  version: 0.2.19
+  version: 0.2.14
 requirements:
   build:
   - python
