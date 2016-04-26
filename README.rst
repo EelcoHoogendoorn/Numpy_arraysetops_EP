@@ -26,8 +26,7 @@ and set operations.
   - count: numpy equivalent of collections.Counter
   - mode: find the most frequently occuring items in a set
   - multiplicity: number of occurrences of each key in a sequence
-  - count\_table: like R's table or pandas crosstab, or an ndim version
-    of np.bincount
+  - count\_table: like R's table or pandas crosstab, or an ndim version of np.bincount
 
 Some brief examples to give an impression hereof:
 

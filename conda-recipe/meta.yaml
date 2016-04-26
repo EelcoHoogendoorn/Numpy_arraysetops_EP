@@ -15,7 +15,6 @@ requirements:
   - numpy
   - pyyaml 3.11*
   - future 0.15*
-  - pypandoc
   run:
   - python
   - numpy
