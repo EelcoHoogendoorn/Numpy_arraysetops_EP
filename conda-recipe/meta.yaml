@@ -1,8 +1,7 @@
 about:
   home: https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP
   license: Freely Distributable
-  summary: Numpy extensions for set operations on nd-arrays, group_by operations,
-    and related functionality
+  summary: Numpy extensions for set operations on nd-arrays, group_by operations, and related functionality
 build:
   noarch_python: true
   number: 1
