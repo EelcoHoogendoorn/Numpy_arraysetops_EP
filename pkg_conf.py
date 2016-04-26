@@ -46,25 +46,9 @@ def get_version():
     return _cache['version']
 
 
-def get_readme():
-    global _cache
-    if 'readme' not in _cache:
-        with open(os.path.join(ABS_REPO_ROOT, 'README.md'), "r") as infile:
-            _cache['readme'] = infile.read()
-    return _cache['readme']
-
-
 def get_readme_rst():
     with open(os.path.join(ABS_REPO_ROOT, 'README.rst'), "r") as infile:
         return infile.read()
-
-
-def convert_readme():
-    import pypandoc
-    pypandoc.convert(
-        os.path.join(ABS_REPO_ROOT, 'README.md'),
-        'rst',
-        outputfile=os.path.join(ABS_REPO_ROOT, 'README.rst'))
 
 
 def get_build_number():

@@ -2,8 +2,6 @@ name: numpy_indexed
 channels:
   - anaconda
   - clinicalgraphics
-  - BjornFJohansson
-  - janschulz
 dependencies:
   - python
   - numpy
