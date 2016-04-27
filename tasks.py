@@ -35,7 +35,7 @@ def _confirm(prompt='Are you sure?', error='Cancelled.'):
     """
     Prompt the user to confirm.
     """
-    response = raw_input("{} Type 'y' and hit enter to continue. Anything else will cancel.\n".format(prompt)).lower()
+    response = input("{} Type 'y' and hit enter to continue. Anything else will cancel.\n".format(prompt)).lower()
 
     if str(response) != r"y":
         _exit(error)
