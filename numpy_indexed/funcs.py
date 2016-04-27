@@ -59,6 +59,7 @@ def count_table(*keys):
     Equivalent to R's pivot table or pandas 'crosstab'
     Alternatively, dense equivalent of the count function
     Should we add weights option?
+    Or better yet; what about general reductions over key-grids?
     """
     indices  = [as_index(k, axis=0) for k in keys]
     uniques  = [i.unique  for i in indices]
@@ -67,6 +68,32 @@ def count_table(*keys):
     table = np.zeros(shape, np.int)
     np.add.at(table, inverses, 1)
     return tuple(uniques), table
+
+
+class Table(object):
+    """group_by type stuff on dense grids; like a generalized bincount"""
+    def __init__(self, *keys):
+        self.keys = tuple(keys)
+        self.indices  = [as_index(k, axis=0) for k in keys]
+        self.uniques  = [i.unique  for i in self.indices]
+        self.inverses = [i.inverse for i in self.indices]
+        self.shape    = [i.groups  for i in self.indices]
+
+    def allocate(self, dtype, fill=0):
+        arr = np.empty(self.shape, dtype=dtype)
+        arr.fill(fill)
+        return arr
+
+    def mean(self, values):
+        table = self.allocate(np.float, np.nan)
+        _, means = group_by(self.keys).mean(values)
+        table[tuple(self.inverses)] = means
+        return tuple(self.uniques), table
+
+    def count(self):
+        table = self.allocate(np.int)
+        np.add.at(table, self.inverses, 1)
+        return tuple(self.uniques), table
 
 
 def multiplicity(keys, axis=semantics.axis_default):

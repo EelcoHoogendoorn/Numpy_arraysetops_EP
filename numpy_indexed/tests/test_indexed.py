@@ -274,3 +274,13 @@ def test_containment_relations():
 
     npt.assert_equal(in_(this, []), False)
     npt.assert_equal(in_([], that), [])
+
+
+def test_table():
+    k1 = ["e", "b", "b", "c", "d", "e", "c", 'a']
+    k2 = ["b", "b", "c", "d", "e", "e", 'e', 'e']
+    values = [1.2, 4.5, 4.3, 2.0, 5.6, 8.8, 9.1, 1]
+    u, t = Table(k1, k2).mean(values)
+    # u, t = Table(k1, k2).count()
+    print(u)
+    print(t)

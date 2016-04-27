@@ -76,11 +76,11 @@ def contains(this, that, axis=semantics.axis_default):
     left = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='left')
     right = np.searchsorted(that._keys, this._keys, sorter=that.sorter, side='right')
 
-    flags = np.zeros(that.size + 1, np.int32)
+    flags = np.zeros(that.size + 1, dtype=np.int8)
     flags[left] += 1
     flags[right] -= 1
 
-    return that.sorter[np.cumsum(flags)[:-1].astype(np.bool)]
+    return that.sorter[np.cumsum(flags, dtype=np.int8)[:-1].astype(np.bool)]
 
 
 def in_(this, that, axis=semantics.axis_default):
