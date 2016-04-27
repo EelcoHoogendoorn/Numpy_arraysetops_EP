@@ -1,6 +1,7 @@
 # http://www.appveyor.com/docs/appveyor-yml
-os: Windows Server 2012
-
+os: os  # Windows Server 2012
+# https://www.appveyor.com/blog/2014/06/04/shallow-clone-for-git-repositories
+shallow_clone: true 
 # Just being explicit and useful if we ever want to refer to it
 clone_folder: C:\projects\numpy_indexed
 
