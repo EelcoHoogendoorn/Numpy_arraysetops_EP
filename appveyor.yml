@@ -23,6 +23,9 @@ platform:
 # Makes AppVeyor give up all builds as soon as any of the builds fails
 matrix:
   fast_finish: false
+  
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 install:
   # By default, all script lines are interpreter as batch
