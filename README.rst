@@ -18,7 +18,7 @@ and set operations.
   - union
   - difference
   - exclusive (xor)
-  - contains / in_ (in1d)
+  - contains / in (in1d)
 
 * Some new functions:
 
