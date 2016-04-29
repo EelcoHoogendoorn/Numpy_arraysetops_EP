@@ -289,6 +289,11 @@ def test_regression_contains():
     npt.assert_equal(contains(a[:, 1:], b), True)
     npt.assert_equal(contains(b, a[:, 1:]), [True]*3+[False])
 
+    this = [0, 1, 2, 2, 3, 4]
+    that = [2, 3]
+    npt.assert_equal(in_(this, that), contains(that, this))
+    npt.assert_equal(in_(that, this), contains(this, that))
+
 
 def test_table():
     k1 = ["e", "b", "b", "c", "d", "e", "c", 'a']
