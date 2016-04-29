@@ -269,9 +269,13 @@ def test_containment_relations():
     npt.assert_equal(in_(this, that), True)
     npt.assert_equal(contains(that, this), True)
 
+    this = np.random.randint(0, 9, 20)
+    that = np.random.randint(0, 4, 10)
+
     npt.assert_equal(in_(this, that), contains(that, this))
     npt.assert_equal(in_(that, this), contains(this, that))
 
+    # test empty behavior
     npt.assert_equal(contains(this, []), [])
     npt.assert_equal(contains([], that), False)
 
