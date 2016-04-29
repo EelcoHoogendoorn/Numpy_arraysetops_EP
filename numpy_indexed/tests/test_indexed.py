@@ -267,13 +267,23 @@ def test_containment_relations():
     this = [1, 1, 1]
     that = [1, 2, 2, 1, 3, 1]
     npt.assert_equal(in_(this, that), True)
-    npt.assert_equal(contains(that, this), np.arange(3))
+    npt.assert_equal(contains(that, this), True)
+
+    npt.assert_equal(in_(this, that), contains(that, this))
+    npt.assert_equal(in_(that, this), contains(this, that))
 
     npt.assert_equal(contains(this, []), [])
-    npt.assert_equal(contains([], that), [])
+    npt.assert_equal(contains([], that), False)
 
     npt.assert_equal(in_(this, []), False)
     npt.assert_equal(in_([], that), [])
+
+
+def test_regression_contains():
+    a = np.array([[4, 2.2, 5], [2, -6.3, 0], [3, 3.6, 8], [5, -9.8, 50]])
+    b = np.array([[2.2, 5], [-6.3, 0], [3.6, 8]])
+    npt.assert_equal(contains(a[:, 1:], b), True)
+    npt.assert_equal(contains(b, a[:, 1:]), [True]*3+[False])
 
 
 def test_table():

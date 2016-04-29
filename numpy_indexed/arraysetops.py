@@ -80,7 +80,7 @@ def contains(this, that, axis=semantics.axis_default):
     flags[left] += 1
     flags[right] -= 1
 
-    return that.sorter[np.cumsum(flags, dtype=np.int8)[:-1].astype(np.bool)]
+    return np.cumsum(flags, dtype=np.int8)[:-1].astype(np.bool)[that.rank]
 
 
 def in_(this, that, axis=semantics.axis_default):
