@@ -51,7 +51,7 @@ def unique(keys, axis=semantics.axis_default, return_index=False, return_inverse
 
 
 def contains(this, that, axis=semantics.axis_default):
-    """Returns the index of each element of `that` which is contained in `this`
+    """Returns bool for each element of `that`, indicating if it is contained in `this`
 
     Parameters
     ----------
@@ -62,8 +62,8 @@ def contains(this, that, axis=semantics.axis_default):
 
     Returns
     -------
-    ndarray, [n], int
-        the index of each element of `that` which is present in `this`
+    ndarray, [that.size], bool
+        returns a bool for each element in `that`, indicating if it is contained in `this`
 
     Notes
     -----
