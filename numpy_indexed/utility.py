@@ -8,12 +8,13 @@ __license__ = "LGPL"
 __email__ = "hoogendoorn.eelco@gmail.com"
 
 
-def as_struct_array(*columns):
+def as_struct_array(*columns, names=None):
     """pack a sequence of columns into a recarray
 
     Parameters
     ----------
     columns : sequence of key objects
+    names : sequence of str, optional
 
     Returns
     -------
@@ -23,7 +24,8 @@ def as_struct_array(*columns):
     columns = [np.asarray(c) for c in columns]
     rows = len(columns[0])
 
-    names = ['f'+str(i) for i in range(len(columns))]
+    if names is None:
+        names = ['f'+str(i) for i in range(len(columns))]
     dtype = [(names[i], c.dtype, c.shape[1:]) for i, c in enumerate(columns)]
     data = np.empty(rows, dtype)
     for i, c in enumerate(columns):
