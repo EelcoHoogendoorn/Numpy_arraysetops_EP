@@ -2,7 +2,6 @@ from setuptools import find_packages
 from distutils.core import setup
 
 import pkg_conf
-import os
 
 
 setup(
@@ -10,6 +9,7 @@ setup(
     name=pkg_conf.PKG_NAME,
     version=pkg_conf.get_version(),
     packages=find_packages(),
+    install_requires=['pyyaml'],
     description=pkg_conf.get_recipe_meta()['about']['summary'],
     long_description=pkg_conf.get_readme_rst(),
     author=pkg_conf.AUTHOR,
