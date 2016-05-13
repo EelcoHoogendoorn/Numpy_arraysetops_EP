@@ -335,13 +335,3 @@ def test_weighted_mean():
     weights = [0,  0,   1,   1,   1,    1,    8,    1]
     g, mean_w = group_by(keys).mean(values, weights=np.array(weights)*3)
     npt.assert_allclose(mean_w, [1, 4.3, 2, 5.67, 8])
-
-def test_coo():
-    import scipy.sparse
-    dense = np.random.randint(0, 10, (4, 4))
-    coo = scipy.sparse.coo_matrix(dense)
-    print(dense)
-    row, argmax = group_by(coo.row).argmax(coo.data)
-
-    col, argmax = group_by(coo.col).argmax(coo.data)
-    row = coo.row[argmax]
