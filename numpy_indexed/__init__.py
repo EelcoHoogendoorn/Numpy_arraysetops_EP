@@ -14,4 +14,4 @@ __email__ = "hoogendoorn.eelco@gmail.com"
 
 pkg_dir = os.path.abspath(os.path.dirname(__file__))
 
-__version__ = '0.2.19'
+__version__ = '0.3.dev0'
