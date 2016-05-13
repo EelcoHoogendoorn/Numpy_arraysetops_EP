@@ -188,7 +188,7 @@ class GroupBy(object):
 
 
     # ufunc based reduction methods. should they return unique keys by default?
-    def reduce(self, values, operator=np.add):
+    def reduce(self, values, operator=np.add, axis=0, dtype=None):
         """Reduce the values over identical key groups, using the given ufunc
         reduction is over the first axis, which should have elements corresponding to the keys
         all other axes are treated indepenently for the sake of this reduction
@@ -199,6 +199,9 @@ class GroupBy(object):
             values to perform reduction over
         operator : numpy.ufunc
             a numpy ufunc, such as np.add or np.sum
+        axis : int, optional
+            the axis to reduce over
+        dtype : output dtype
 
         Returns
         -------
@@ -206,10 +209,10 @@ class GroupBy(object):
         values reduced by operator over the key-groups
         """
         values = values[self.index.sorter]
-        return operator.reduceat(values, self.index.start)
+        return operator.reduceat(values, self.index.start, axis=axis, dtype=dtype)
 
 
-    def sum(self, values, axis=0):
+    def sum(self, values, axis=0, dtype=None):
         """compute the sum over each group
 
         Parameters
@@ -218,6 +221,7 @@ class GroupBy(object):
             values to sum per group
         axis : int, optional
             alternative reduction axis for values
+        dtype : output dtype
 
         Returns
         -------
@@ -227,10 +231,9 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        return self.unique, self.reduce(values)
+        return self.unique, self.reduce(values, axis=axis, dtype=dtype)
 
-    def mean(self, values, axis=0):
+    def mean(self, values, axis=0, weights=None, dtype=None):
         """compute the mean over each group
 
         Parameters
@@ -239,6 +242,9 @@ class GroupBy(object):
             values to take average of per group
         axis : int, optional
             alternative reduction axis for values
+        weights : ndarray, [keys, ...], optional
+            weight to use for each value
+        dtype : output dtype
 
         Returns
         -------
@@ -248,9 +254,14 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        count = self.count.reshape(-1,*(1,)*(values.ndim-1))
-        return self.unique, self.reduce(values) / count
+        if weights is None:
+            result = self.reduce(values, axis=axis, dtype=dtype)
+            weights = self.count.reshape(-1,*(1,)*(values.ndim-1))
+        else:
+            weights = np.asarray(weights)
+            result = self.reduce(values * weights, axis=axis, dtype=dtype)
+            weights = self.reduce(weights, axis=axis, dtype=dtype)
+        return self.unique, result / weights
 
     def var(self, values, axis=0):
         """compute the variance over each group
@@ -423,6 +434,48 @@ class GroupBy(object):
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, values[self.index.sorter[self.index.stop-1]]
+
+    def argmin(self, values):
+        """return the index into values corresponding to the minimum value of the group
+
+        Parameters
+        ----------
+        values : array_like, [keys]
+            values to pick the argmin of per group
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        argmin : ndarray, [groups]
+            index into value array, representing the argmin per group
+        """
+        keys, minima = self.min(values)
+        minima = minima[self.inverse]
+        # select the first occurence of the minimum in each group
+        index = as_index((self.inverse, values == minima))
+        return keys, index.sorter[index.start[-self.groups:]]
+
+    def argmax(self, values):
+        """return the index into values corresponding to the maximum value of the group
+
+        Parameters
+        ----------
+        values : array_like, [keys]
+            values to pick the argmax of per group
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        argmax : ndarray, [groups]
+            index into value array, representing the argmax per group
+        """
+        keys, maxima = self.max(values)
+        maxima = maxima[self.inverse]
+        # select the first occurence of the maximum in each group
+        index = as_index((self.inverse, values == maxima))
+        return keys, index.sorter[index.start[-self.groups:]]
 
     #implement iter interface? could simply do zip( group_by(keys)(values)), no?
 

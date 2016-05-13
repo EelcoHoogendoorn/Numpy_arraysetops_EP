@@ -303,3 +303,35 @@ def test_table():
     # u, t = Table(k1, k2).count()
     print(u)
     print(t)
+
+
+def test_argmin():
+    a = [4, 5, 6, 8, 0, 9, 8, 5, 4, 9]
+    b = [2, 0, 0, 1, 1, 2, 2, 2, 2, 2]
+    k, u = group_by(b).argmin(a)
+    npt.assert_equal(k, [0, 1, 2])
+    npt.assert_equal(u, [1, 4, 0])
+
+
+def test_argmax():
+    a = [4, 5, 6, 8, 0, 9, 8, 5, 4, 9]
+    b = [0, 0, 0, 0, 1, 2, 2, 2, 2, 2]
+    k, u = group_by(b).argmax(a)
+    npt.assert_equal(k, [0, 1, 2])
+    npt.assert_equal(u, [3, 4, 5])
+
+
+def test_weighted_mean():
+    keys   = ["e", "b", "b", "c", "d", "e", "e", 'a']
+    values = [1.2, 4.5, 4.3, 2.0, 5.67, 8.08, 7.99, 1]
+    weights = [1,  1,   1,   1,   1,    1,    1,    1]
+    g, mean_none = group_by(keys).mean(values, weights=None)
+    g, mean_ones = group_by(keys).mean(values, weights=weights)
+    g, mean_threes = group_by(keys).mean(values, weights=np.array(weights)*3)
+
+    npt.assert_equal(mean_none, mean_ones)
+    npt.assert_allclose(mean_none, mean_threes)     # we incurr some fp error here
+
+    weights = [0,  0,   1,   1,   1,    1,    8,    1]
+    g, mean_w = group_by(keys).mean(values, weights=np.array(weights)*3)
+    npt.assert_allclose(mean_w, [1, 4.3, 2, 5.67, 8])
