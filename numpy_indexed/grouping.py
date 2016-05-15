@@ -263,7 +263,7 @@ class GroupBy(object):
             weights = self.reduce(weights, axis=axis, dtype=dtype)
         return self.unique, result / weights
 
-    def var(self, values, axis=0):
+    def var(self, values, axis=0, weights=None, dtype=None):
         """compute the variance over each group
 
         Parameters
@@ -281,13 +281,20 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        count = self.count.reshape(-1,*(1,)*(values.ndim-1))
-        mean = self.reduce(values) / count
-        err = values - mean[self.inverse]
-        return self.unique, self.reduce(err**2) / count
+        unique, mean = self.mean(values, axis, weights, dtype)
+        err = values - mean.take(self.inverse, axis)
 
-    def std(self, values, axis=0):
+        if weights is None:
+            group_weights = self.count.reshape(-1,*(1,)*(values.ndim-1))
+            var = self.reduce(err ** 2, axis=axis, dtype=dtype)
+        else:
+            weights = np.asarray(weights)
+            group_weights = self.reduce(weights, axis=axis, dtype=dtype)
+            var = self.reduce(weights * err ** 2, axis=axis, dtype=dtype)
+
+        return unique, var / group_weights
+
+    def std(self, values, axis=0, weights=None, dtype=None):
         """standard deviation over each group
 
         Parameters
@@ -304,7 +311,7 @@ class GroupBy(object):
         reduced : ndarray, [groups, ...]
             value array, reduced over groups
         """
-        unique, var = self.var(values, axis)
+        unique, var = self.var(values, axis, weights, dtype)
         return unique, np.sqrt(var)
 
     def median(self, values, axis=0, average=True):

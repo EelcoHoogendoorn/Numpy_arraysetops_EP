@@ -333,5 +333,18 @@ def test_weighted_mean():
     npt.assert_allclose(mean_none, mean_threes)     # we incurr some fp error here
 
     weights = [0,  0,   1,   1,   1,    1,    8,    1]
-    g, mean_w = group_by(keys).mean(values, weights=np.array(weights)*3)
+    g, mean_w = group_by(keys).mean(values, weights=weights)
     npt.assert_allclose(mean_w, [1, 4.3, 2, 5.67, 8])
+
+
+def test_weighted_std():
+    means = [0, 1, 2]
+    stds = [1, 2, 3]
+    samples = [100, 1000, 10000]
+
+    normal = np.concatenate([np.random.normal(*p) for p in zip(means, stds, samples)])
+    keys = np.concatenate([np.ones(s)*s for s in samples])
+    weights = np.random.rand(len(normal))
+
+    g, std_w = group_by(keys).std(normal, weights=weights)
+    print(std_w)
