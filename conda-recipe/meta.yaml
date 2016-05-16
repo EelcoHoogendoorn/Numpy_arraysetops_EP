@@ -5,10 +5,10 @@ about:
     and related functionality
 build:
   noarch_python: true
-  number: 0
+  number: 1
 package:
   name: numpy-indexed
-  version: 0.3.dev1
+  version: 0.3.1
 requirements:
   build:
   - python
