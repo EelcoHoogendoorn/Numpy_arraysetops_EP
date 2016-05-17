@@ -233,6 +233,27 @@ class GroupBy(object):
         values = np.asarray(values)
         return self.unique, self.reduce(values, axis=axis, dtype=dtype)
 
+    def prod(self, values, axis=0, dtype=None):
+        """compute the product over each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to multiply per group
+        axis : int, optional
+            alternative reduction axis for values
+        dtype : output dtype
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
+        values = np.asarray(values)
+        return self.unique, self.reduce(values, axis=axis, dtype=dtype, operator=np.multiply)
+
     def mean(self, values, axis=0, weights=None, dtype=None):
         """compute the mean over each group
 
@@ -441,6 +462,48 @@ class GroupBy(object):
         values = np.asarray(values)
         if axis: values = np.rollaxis(values, axis)
         return self.unique, values[self.index.sorter[self.index.stop-1]]
+
+    def any(self, values, axis=0):
+        """compute if any item evaluates to true in each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take boolean predicate over per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...], np.bool
+            value array, reduced over groups
+        """
+        values = np.asarray(values)
+        if not values.dtype == np.bool:
+            values = values != 0
+        return self.unique, self.reduce(values, axis=axis) > 0
+
+    def all(self, values, axis=0):
+        """compute if all items evaluates to true in each group
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to take boolean predicate over per group
+        axis : int, optional
+            alternative reduction axis for values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...], np.bool
+            value array, reduced over groups
+        """
+        values = np.asarray(values)
+        return self.unique, self.reduce(values, axis=axis, operator=np.multiply) != 0
 
     def argmin(self, values):
         """return the index into values corresponding to the minimum value of the group

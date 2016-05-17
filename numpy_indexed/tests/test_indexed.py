@@ -348,3 +348,17 @@ def test_weighted_std():
 
     g, std_w = group_by(keys).std(normal, weights=weights)
     print(std_w)
+
+
+def test_prod():
+    keys   = ["e", "b", "b", "c", "d", "e", "e", 'a']
+    values = [1.2, 4.5, 4.3, 2.0, 5.67, 8.08, 0, 1]
+    g, p = group_by(keys).prod(values)
+    print(g, p)
+
+
+def test_all():
+    keys   = ["e", "b", "b", "c", "d", "e", "e", 'a']
+    values = [1.2, 4.5, 4.3, 0,   5.67, 8.08, 0, 1]
+    g, p = group_by(keys).all(values)
+    print(g, p)
