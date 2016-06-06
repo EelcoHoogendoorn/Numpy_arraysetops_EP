@@ -122,12 +122,13 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
         items to search in
     that : indexable object
         items to search for
-    missing : {'raise', 'ignore', 'mask'}
+    missing : {'raise', 'ignore', 'mask' or int}
         if `missing` is 'raise', a KeyError is raised if not all elements of `that` are present in `this`
         if `missing` is 'mask', a masked array is returned,
         where items of `that` not present in `this` are masked out
         if `missing` is 'ignore', all elements of `that` are assumed to be present in `this`,
         and output is undefined otherwise
+        if missing is an integer, this is used as a fill-value
 
     Returns
     -------
@@ -157,7 +158,7 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
         elif missing == 'mask':
             indices = np.ma.masked_array(indices, invalid)
         else:
-            raise ValueError("Invalid value for `missing` argument; must be 'raise', 'mask' or 'ignore'.")
+            indices[invalid] = missing
     return indices
 
 
