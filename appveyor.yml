@@ -60,10 +60,6 @@ build_script:
   # build egg
   - python setup.py sdist
 
-# after_build:
-#  # archive built package(s)
-#  - ps: Get-ChildItem $env:PYTHON\conda-bld\win-64\*.tar.bz2 | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
-
 skip_commits:
   # skip commits when creating new branches, closing branches, also see https://www.appveyor.com/docs/how-to/skip-build
   # case-insensitive regex flag is not processed!!
