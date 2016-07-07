@@ -51,7 +51,7 @@ Installation
 
 .. code:: python
 
-    > conda install numpy-indexed -c eelcohoogendoorn
+    > conda install numpy-indexed -c conda-forge
 
 or
 

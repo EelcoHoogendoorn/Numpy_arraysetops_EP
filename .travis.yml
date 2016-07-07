@@ -25,7 +25,10 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda env create
   - source activate numpy_indexed
-
+  - conda list
+  - source deactivate
+  - conda list
+  
 script:
   # Your test script goes here
   - invoke test
