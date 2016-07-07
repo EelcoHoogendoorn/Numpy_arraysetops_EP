@@ -23,10 +23,6 @@ on_linux = sys.platform.startswith("linux")
 on_osx = sys.platform.startswith("darwin")
 
 
-def run(*args, **kwargs):
-    subprocess.check_output(args[0])
-
-
 def _print(message):
     print("[INVOKE] {}".format(message))
 
