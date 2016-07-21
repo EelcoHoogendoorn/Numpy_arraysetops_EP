@@ -175,13 +175,13 @@ def remap(input, keys, values, missing='ignore', inplace=False):
         values to perform replacements in
     values : ndarray, [...]
         values to perform replacements in
-    missing : {'raise', 'ignore', 'mask' or value}
+    missing : {'raise', 'ignore'}
         if `missing` is 'raise', a KeyError is raised if 'values' contains elements not present in 'keys'
         if `missing` is 'ignore', only elements of 'values' persent in 'keys' are remapped
     inplace : bool, optional
         if True, input array is remapped in place
         if false, a copy is returned
-        
+
     Returns
     -------
     output : ndarray, [...]
@@ -189,13 +189,15 @@ def remap(input, keys, values, missing='ignore', inplace=False):
     """
     input = np.asarray(input)
     values = np.asarray(values)
-    if missing is 'ignore':
+    if missing == 'ignore':
         idx = indices(keys, input, missing='mask')
         mask = np.logical_not(idx.mask)
         idx = idx.data
-    else:
+    elif missing == 'raise':
         idx = indices(keys, input, missing='raise')
         mask = Ellipsis
+    else:
+        raise ValueError("'missing' should be either 'ignore' or 'raise'")
     output = input if inplace else input.copy()
     output[mask] = values[idx[mask]]
     return output
