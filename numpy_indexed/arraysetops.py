@@ -178,7 +178,10 @@ def remap(input, keys, values, missing='ignore', inplace=False):
     missing : {'raise', 'ignore', 'mask' or value}
         if `missing` is 'raise', a KeyError is raised if 'values' contains elements not present in 'keys'
         if `missing` is 'ignore', only elements of 'values' persent in 'keys' are remapped
-
+    inplace : bool, optional
+        if True, input array is remapped in place
+        if false, a copy is returned
+        
     Returns
     -------
     output : ndarray, [...]
