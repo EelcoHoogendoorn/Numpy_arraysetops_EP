@@ -122,6 +122,8 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
         items to search in
     that : indexable object
         items to search for
+    axis : int, optional
+        axis to operate on
     missing : {'raise', 'ignore', 'mask' or int}
         if `missing` is 'raise', a KeyError is raised if not all elements of `that` are present in `this`
         if `missing` is 'mask', a masked array is returned,
@@ -160,6 +162,40 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
         else:
             indices[invalid] = missing
     return indices
+
+
+def remap(input, keys, values, missing='ignore', inplace=False):
+    """remap keys to values
+
+    Parameters
+    ----------
+    input : ndarray, [...]
+        values to perform replacements in
+    keys : ndarray, [...]
+        values to perform replacements in
+    values : ndarray, [...]
+        values to perform replacements in
+    missing : {'raise', 'ignore', 'mask' or value}
+        if `missing` is 'raise', a KeyError is raised if 'values' contains elements not present in 'keys'
+        if `missing` is 'ignore', only elements of 'values' persent in 'keys' are remapped
+
+    Returns
+    -------
+    output : ndarray, [...]
+        like 'input', but with elements remapped according to the mapping defined by 'keys' and 'values'
+    """
+    input = np.asarray(input)
+    values = np.asarray(values)
+    if missing is 'ignore':
+        idx = indices(keys, input, missing='mask')
+        mask = np.logical_not(idx.mask)
+        idx = idx.data
+    else:
+        idx = indices(keys, input, missing='raise')
+        mask = Ellipsis
+    output = input if inplace else input.copy()
+    output[mask] = values[idx[mask]]
+    return output
 
 
 def _set_preprocess(sets, **kwargs):
@@ -317,4 +353,4 @@ def difference(*sets, **kwargs):
     return exclusive(lhs, *rhs, axis=0, assume_unique=True)
 
 
-__all__ = ['unique', 'contains', 'in_', 'indices', 'union', 'intersection', 'exclusive', 'difference']
+__all__ = ['unique', 'contains', 'in_', 'indices', 'remap', 'union', 'intersection', 'exclusive', 'difference']

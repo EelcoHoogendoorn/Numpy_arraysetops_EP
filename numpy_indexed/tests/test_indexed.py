@@ -362,3 +362,24 @@ def test_all():
     values = [1.2, 4.5, 4.3, 0,   5.67, 8.08, 0, 1]
     g, p = group_by(keys).all(values)
     print(g, p)
+
+
+def test_remap():
+    keys = [1, 2, 3, 4]
+    values = [5, 6, 7, 8]
+    input = [1, 1, 2, 4]
+    output = remap(input, keys, values)
+    npt.assert_equal(output, [5, 5, 6, 8])
+
+    with pytest.raises(KeyError):
+        output = remap(input, np.array(keys) + 10, values, missing='raise')
+
+    output = remap(input, np.array(keys)+10, values)
+    npt.assert_equal(output, input)
+
+    # test with more input
+    keys = np.tile(keys, [2, 1]).T
+    values = np.tile(values, [2, 1]).T
+    input = np.tile(input, [2, 1]).T
+    output = remap(input, keys, values)
+    npt.assert_equal(output, np.tile([5, 5, 6, 8], [2, 1]).T)
