@@ -165,7 +165,9 @@ def indices(this, that, axis=semantics.axis_default, missing='raise'):
 
 
 def remap(input, keys, values, missing='ignore', inplace=False):
-    """remap keys to values
+    """Given an input array, remap its entries corresponding to 'keys' to 'values'
+    equivalent of output = [map.get(i, default=i) for i in input],
+    if map were a dictionary of corresponding keys and values
 
     Parameters
     ----------
@@ -187,7 +189,7 @@ def remap(input, keys, values, missing='ignore', inplace=False):
     output : ndarray, [...]
         like 'input', but with elements remapped according to the mapping defined by 'keys' and 'values'
     """
-    input = np.asarray(input)
+    input = np.asarray(input)   # FIXME: currently instances of Index are not allowed
     values = np.asarray(values)
     if missing == 'ignore':
         idx = indices(keys, input, missing='mask')
