@@ -59,6 +59,8 @@ or
 
     > pip install numpy-indexed
 
+See: https://pypi.python.org/pypi/numpy-indexed
+
 Design decisions:
 -----------------
 
