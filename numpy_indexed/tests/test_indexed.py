@@ -383,3 +383,15 @@ def test_remap():
     input = np.tile(input, [2, 1]).T
     output = remap(input, keys, values)
     npt.assert_equal(output, np.tile([5, 5, 6, 8], [2, 1]).T)
+
+
+def test_mean_axis():
+    """http://stackoverflow.com/questions/38607586/delete-columns-based-on-repeat-value-in-one-row-in-numpy-array"""
+    initial_array = np.array(
+    [[1, 1, 1, 1, 1, 1, 1, 1, ],
+    [0.5, 1, 2.5, 4, 2.5, 2, 1, 3.5,],
+    [1, 1.5, 3, 4.5, 3, 2.5, 1.5, 4,],
+    [228, 314, 173, 452, 168, 351, 300, 396]])
+
+    unique, final_array = group_by(initial_array[1, :]).mean(initial_array, axis=1)
+    print(final_array)

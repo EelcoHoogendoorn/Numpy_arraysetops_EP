@@ -154,7 +154,8 @@ class GroupBy(object):
         AssertionError
             This operation is only possible if index.uniform==True
         """
-        assert self.index.uniform, "Array can only be split as array if all groups have the same size"
+        if not self.index.uniform:
+            raise ValueError("Array can only be split as array if all groups have the same size")
         values = np.asarray(values)
         values = values[self.index.sorter]
         return values.reshape(self.groups, -1, *values.shape[1:])
@@ -208,7 +209,7 @@ class GroupBy(object):
         ndarray, [groups, ...]
         values reduced by operator over the key-groups
         """
-        values = values[self.index.sorter]
+        values = np.take(values, self.index.sorter, axis=axis)
         return operator.reduceat(values, self.index.start, axis=axis, dtype=dtype)
 
 
@@ -277,7 +278,9 @@ class GroupBy(object):
         values = np.asarray(values)
         if weights is None:
             result = self.reduce(values, axis=axis, dtype=dtype)
-            weights = self.count.reshape(-1,*(1,)*(values.ndim-1))
+            shape = [1] * values.ndim
+            shape[axis] = self.groups
+            weights = self.count.reshape(shape)
         else:
             weights = np.asarray(weights)
             result = self.reduce(values * weights, axis=axis, dtype=dtype)
@@ -306,7 +309,9 @@ class GroupBy(object):
         err = values - mean.take(self.inverse, axis)
 
         if weights is None:
-            group_weights = self.count.reshape(-1,*(1,)*(values.ndim-1))
+            shape = [1] * values.ndim
+            shape[axis] = self.groups
+            group_weights = self.count.reshape(shape)
             var = self.reduce(err ** 2, axis=axis, dtype=dtype)
         else:
             weights = np.asarray(weights)
@@ -335,6 +340,7 @@ class GroupBy(object):
         unique, var = self.var(values, axis, weights, dtype)
         return unique, np.sqrt(var)
 
+    # FIXME: remove rollaxis stuff in the functions below as well
     def median(self, values, axis=0, average=True):
         """compute the median value over each group.
 
