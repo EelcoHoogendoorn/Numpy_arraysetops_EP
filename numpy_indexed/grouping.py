@@ -360,8 +360,6 @@ class GroupBy(object):
         reduced : ndarray, [groups, ...]
             value array, reduced over groups
         """
-        values = np.asarray(values)
-
         mid_2 = self.index.start + self.index.stop
         hi = (mid_2    ) // 2
         lo = (mid_2 - 1) // 2
@@ -378,9 +376,8 @@ class GroupBy(object):
             return (slc[lo]+slc[hi]) / 2 if average else slc[hi]
 
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
         if values.ndim>1:   #is trying to skip apply_along_axis somewhat premature optimization?
-            values = np.apply_along_axis(median1d, 0, values)
+            values = np.apply_along_axis(median1d, axis, values)
         else:
             values = median1d(values)
         return self.unique, values
@@ -403,8 +400,7 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        return self.unique, self.reduce(values, np.minimum)
+        return self.unique, self.reduce(values, np.minimum, axis)
 
     def max(self, values, axis=0):
         """return the maximum within each group
@@ -424,8 +420,7 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        return self.unique, self.reduce(values, np.maximum)
+        return self.unique, self.reduce(values, np.maximum, axis)
 
     def first(self, values, axis=0):
         """return values at first occurance of its associated key
@@ -445,8 +440,7 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        return self.unique, values[self.index.sorter[self.index.start]]
+        return self.unique, np.take(values, self.index.sorter[self.index.start], axis)
 
     def last(self, values, axis=0):
         """return values at last occurance of its associated key
@@ -466,8 +460,7 @@ class GroupBy(object):
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if axis: values = np.rollaxis(values, axis)
-        return self.unique, values[self.index.sorter[self.index.stop-1]]
+        return self.unique, np.take(values, self.index.sorter[self.index.stop-1], axis)
 
     def any(self, values, axis=0):
         """compute if any item evaluates to true in each group
@@ -569,6 +562,8 @@ def group_by(keys, values=None, reduction=None, axis=0):
         if no reduction is provided, the given values are grouped and split by key
     reduction : lambda, optional
         reduction function to apply to the values in each group
+    axis : int, optional
+        axis to regard as the key-sequence, in case keys is multi-dimensional
 
     Returns
     -------
