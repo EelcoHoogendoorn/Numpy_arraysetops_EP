@@ -76,8 +76,10 @@ class Table(object):
         self.keys = tuple(keys)
         self.indices  = [as_index(k, axis=0) for k in keys]
         self.uniques  = [i.unique  for i in self.indices]
-        self.inverses = [i.inverse for i in self.indices]
         self.shape    = [i.groups  for i in self.indices]
+
+    def get_inverses(self, keys):
+        return tuple([as_index(k, axis=0).inverse for k in keys])
 
     def allocate(self, dtype, fill=0):
         arr = np.empty(self.shape, dtype=dtype)
@@ -86,19 +88,31 @@ class Table(object):
 
     def count(self):
         table = self.allocate(np.int)
-        np.add.at(table, self.inverses, 1)
+        np.add.at(table, self.get_inverses(self.indices), 1)
         return tuple(self.uniques), table
 
     def sum(self, values):
         table = self.allocate(values.dtype)
-        _, sums = group_by(self.keys).sum(values)
-        table[tuple(self.inverses)] = sums
+        keys, values = group_by(self.keys).sum(values)
+        table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table
 
     def mean(self, values):
         table = self.allocate(np.float, np.nan)
-        _, means = group_by(self.keys).mean(values)
-        table[tuple(self.inverses)] = means
+        keys, values = group_by(self.keys).mean(values)
+        table[self.get_inverses(keys)] = values
+        return tuple(self.uniques), table
+
+    def first(self, values):
+        table = self.allocate(np.float, np.nan)
+        keys, values = group_by(self.keys).first(values)
+        table[self.get_inverses(keys)] = values
+        return tuple(self.uniques), table
+
+    def last(self, values):
+        table = self.allocate(np.float, np.nan)
+        keys, values = group_by(self.keys).last(values)
+        table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table
 
     def unique(self, values):
