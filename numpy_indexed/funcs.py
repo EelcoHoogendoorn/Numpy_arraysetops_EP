@@ -84,16 +84,29 @@ class Table(object):
         arr.fill(fill)
         return arr
 
+    def count(self):
+        table = self.allocate(np.int)
+        np.add.at(table, self.inverses, 1)
+        return tuple(self.uniques), table
+
+    def sum(self, values):
+        table = self.allocate(values.dtype)
+        _, sums = group_by(self.keys).sum(values)
+        table[tuple(self.inverses)] = sums
+        return tuple(self.uniques), table
+
     def mean(self, values):
         table = self.allocate(np.float, np.nan)
         _, means = group_by(self.keys).mean(values)
         table[tuple(self.inverses)] = means
         return tuple(self.uniques), table
 
-    def count(self):
-        table = self.allocate(np.int)
-        np.add.at(table, self.inverses, 1)
-        return tuple(self.uniques), table
+    def unique(self, values):
+        """Place each entry in a table, while asserting that each entry occurs once"""
+        _, count = self.count()
+        if not np.array_equiv(count, 1):
+            raise ValueError("Not every entry in the table is assigned a unique value")
+        return self.sum(values)
 
 
 def multiplicity(keys, axis=semantics.axis_default):
