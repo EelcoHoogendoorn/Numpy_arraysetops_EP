@@ -15,7 +15,7 @@ requirements:
   - numpy
   - pyyaml 3.11*
   - future 0.15*
-  - invoke >=0.12*
+  - invoke =0.12*
   run:
   - python
   - numpy
