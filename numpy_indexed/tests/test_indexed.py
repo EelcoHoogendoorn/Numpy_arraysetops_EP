@@ -395,3 +395,20 @@ def test_mean_axis():
 
     unique, final_array = group_by(initial_array[1, :]).mean(initial_array, axis=1)
     print(final_array)
+
+
+def test_table_max():
+    idx = np.array([
+        [[0, 0, 1], [0, 1, 2], [0, 2, 3], [3, 0, 16], [0, 4, 5]],
+        [[1, 0, 6], [1, 1, 7], [1, 2, 8], [1, 3, 9], [1, 4, 10]],
+        [[2, 0, 11], [2, 1, 12], [0, 0, 13], [2, 3, 14], [2, 4, 15]],
+        [[3, 0, 4], [3, 1, 17], [3, 2, 18], [3, 3, 19], [3, 4, 20]],
+    ])
+    result = \
+        [[13, 2,  3,  0,  5],
+         [6,  7,  8,  9,  10],
+         [11, 12,  0,  14, 15],
+         [16, 17,  18, 19, 20],]
+    idx = idx.reshape(-1, 3)
+    u, r = Table(idx[:,0], idx[:,1]).max(idx[:,2], default=0)
+    npt.assert_array_equal(r, result)

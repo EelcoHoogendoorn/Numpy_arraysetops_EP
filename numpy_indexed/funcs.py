@@ -115,6 +115,30 @@ class Table(object):
         table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table
 
+    def min(self, values, default=None):
+        if default is None:
+            try:
+                info = np.iinfo(values.dtype)
+                default = info.max
+            except:
+                default = +np.inf
+        table = self.allocate(values.dtype, default)
+        keys, values = group_by(self.keys).min(values)
+        table[self.get_inverses(keys)] = values
+        return tuple(self.uniques), table
+
+    def max(self, values, default=None):
+        if default is None:
+            try:
+                info = np.iinfo(values.dtype)
+                default = info.min
+            except:
+                default = -np.inf
+        table = self.allocate(values.dtype, default)
+        keys, values = group_by(self.keys).max(values)
+        table[self.get_inverses(keys)] = values
+        return tuple(self.uniques), table
+
     def unique(self, values):
         """Place each entry in a table, while asserting that each entry occurs once"""
         _, count = self.count()
