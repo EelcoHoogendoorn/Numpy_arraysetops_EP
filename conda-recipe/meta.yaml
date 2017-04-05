@@ -19,7 +19,7 @@ requirements:
   run:
   - python
   - numpy
-  - future 0.15*
+  - future
 source:
   path: ..
 test:
@@ -28,4 +28,4 @@ test:
   imports:
   - numpy_indexed
   requires:
-  - pytest >=2.8.4,<2.9
+  - pytest
