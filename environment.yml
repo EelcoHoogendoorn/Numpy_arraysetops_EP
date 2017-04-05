@@ -10,4 +10,4 @@ dependencies:
   - pyyaml =3.11*
   - invoke =0.12*
   # tests
-  - pytest >=2.8.4,<2.9
+  - pytest
