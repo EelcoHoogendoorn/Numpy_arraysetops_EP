@@ -6,7 +6,7 @@ import itertools
 
 import numpy as np
 from numpy_indexed.index import as_index
-
+import numpy_indexed as npi
 
 __author__ = "Eelco Hoogendoorn"
 __license__ = "LGPL"
@@ -340,18 +340,17 @@ class GroupBy(object):
         unique, var = self.var(values, axis, weights, dtype)
         return unique, np.sqrt(var)
 
-    # FIXME: remove rollaxis stuff in the functions below as well
     def median(self, values, axis=0, average=True):
         """compute the median value over each group.
 
         Parameters
         ----------
         values : array_like, [keys, ...]
-            values to take average of per group
+            values to compute the median of per group
         axis : int, optional
             alternative reduction axis for values
         average : bool, optional
-            when average is true, the average of the two cental values is taken for groups with an even key-count
+            when average is true, the average of the two central values is taken for groups with an even key-count
 
         Returns
         -------
@@ -381,6 +380,31 @@ class GroupBy(object):
         else:
             values = median1d(values)
         return self.unique, values
+
+    def mode(self, values, weights=None):
+        """compute the mode within each group.
+
+        Parameters
+        ----------
+        values : array_like, [keys, ...]
+            values to compute the mode of per group
+        weights : array_like, [keys], float, optional
+            optional weight associated with each entry in values
+
+        Returns
+        -------
+        unique: ndarray, [groups]
+            unique keys
+        reduced : ndarray, [groups, ...]
+            value array, reduced over groups
+        """
+        if weights is None:
+            unique, weights = npi.count((self.index.sorted_group_rank_per_key, values))
+        else:
+            unique, weights = npi.group_by((self.index.sorted_group_rank_per_key, values)).sum(weights)
+
+        x, bin = npi.group_by(unique[0]).argmax(weights)
+        return x, unique[1][bin]
 
     def min(self, values, axis=0):
         """return the minimum within each group

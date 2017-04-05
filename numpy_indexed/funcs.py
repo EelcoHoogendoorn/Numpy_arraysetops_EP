@@ -70,15 +70,48 @@ def count_table(*keys):
     return tuple(uniques), table
 
 
+def binning(keys, start, end, count, axes=None):
+    """Perform binning over the given axes of the keys
+
+    Parameters
+    ----------
+    keys : indexable or tuple of indexable
+
+    Examples
+    --------
+    binning(np.random.rand(100), 0, 1, 10)
+    """
+    if isinstance(keys, tuple):
+        n_keys = len(keys)
+    else:
+        n_keys = 1
+
+    bins = np.linspace(start, end, count+1, endpoint=True)
+    idx = np.searchsorted(bins, keys)
+    if axes is None:
+        axes = [-1]
+
+
 class Table(object):
-    """group_by type stuff on dense grids; like a generalized bincount"""
+    """group_by type functionality on dense grids; like a generalized bincount
+
+    add fixed range support?
+    Table(ranges).group_by(keys).mean(values)
+    Table().count(keys)
+    """
+
     def __init__(self, *keys):
         self.keys = tuple(keys)
         self.indices  = [as_index(k, axis=0) for k in keys]
-        self.uniques  = [i.unique  for i in self.indices]
-        self.shape    = [i.groups  for i in self.indices]
+        self.uniques  = [i.unique for i in self.indices]
+        self.shape    = [i.groups for i in self.indices]
 
     def get_inverses(self, keys):
+        """
+        Returns
+        -------
+        Tuple of inverse indices
+        """
         return tuple([as_index(k, axis=0).inverse for k in keys])
 
     def allocate(self, dtype, fill=0):
