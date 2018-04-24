@@ -1,33 +1,10 @@
 language: python
 python:
-  # We don't actually use the Travis Python, but this keeps it organized.
   - "2.7"
-  - "3.5"
+  - "3.6"
 install:
-  - sudo apt-get update
-  # We do this conditionally because it saves us some downloading if the
-  # version is the same.
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  # some required packages
-  - conda install conda-build jinja2 anaconda-client --quiet
-  # Useful for debugging any issues with conda
-  - conda info -a
-
-  # Replace dep1 dep2 ... with your dependencies
-  - conda env create
-  - source activate numpy_indexed
-
+  - pip install pipenv --upgrade
+  - pipenv install --dev --system --skip-lock
 script:
-  # Your test script goes here
-  - invoke test
-  - invoke build
-  - python setup.py sdist
+  - PYTHONPATH=. pytest
+  - python setup.py bdist_wheel

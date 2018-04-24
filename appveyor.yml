@@ -1,66 +1,14 @@
-# http://www.appveyor.com/docs/appveyor-yml
-os: unstable  # Windows Server 2012
-# https://www.appveyor.com/blog/2014/06/04/shallow-clone-for-git-repositories
-shallow_clone: true 
-# Just being explicit and useful if we ever want to refer to it
-clone_folder: C:\projects\numpy_indexed
-
 environment:
   matrix:
-    # Pre-installed Python versions, which Appveyor may upgrade to a later point release.
-    # See: http://www.appveyor.com/docs/installed-software#python
-    - PYTHON: C:\Miniconda-x64
-      CONDA_PY: 27
-      CONDA_NPY: 110
-
-    - PYTHON: C:\Miniconda35-x64
-      CONDA_PY: 35
-      CONDA_NPY: 110
-
+    - PYTHON: "C:\\Python27-x64"
+    - PYTHON: "C:\\Python36-x64"
 platform:
   - x64
-
-# Makes AppVeyor give up all builds as soon as any of the builds fails
-matrix:
-  fast_finish: false
-  
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
 install:
-  # By default, all script lines are interpreter as batch
-  - set PATH=%PYTHON%;%PYTHON%\Scripts;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;
-  - set PATH=%PATH%;%SYSTEMROOT%\System32\WindowsPowerShell\v1.0\;C:\Program Files\Mercurial;
-  - set PATH=%PATH%;C:\Program Files\7-Zip;C:\Program Files\AppVeyor\BuildAgent
-
-  # Check that we have the expected version and architecture (x64) for Python
-  - "python --version"
-  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
-
-  # Set up our environment
-  - conda update conda --yes --quiet
-  # show_channel_urls: http://conda.pydata.org/docs/config.html#show-channel-urls-show-channel-urls
-  # always_yes: http://conda.pydata.org/docs/config.html#always-yes-always-yes
-  - conda config --set show_channel_urls True --set always_yes True
-
-  # Install the necessary packages
-  - conda install conda-build jinja2 anaconda-client --quiet
-  # Show us the conda configuration we have right now
-  - conda info -a
-  # If this needs any private packages, we'll have to be more creative
-  - conda env create --force --quiet
-
-# See https://github.com/scikit-learn/scikit-learn/blob/master/appveyor.yml for inspiration
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - pip install pipenv --upgrade
+  - pipenv install --dev --system --skip-lock
 build_script:
-  # There are so many dependencies for the invoke commands that it's easier to use the environment
-  - activate numpy_indexed
-  - invoke test
-  # build conda package; no upload
-  - invoke build
-  # build egg
-  - python setup.py sdist
-
-skip_commits:
-  # skip commits when creating new branches, closing branches, also see https://www.appveyor.com/docs/how-to/skip-build
-  # case-insensitive regex flag is not processed!!
-  message: /([Cc]reated?( new)?|[Cc]losed?) branch.*/
+  - set PYTHONPATH=.
+  - pytest
+  - python setup.py bdist_wheel

@@ -1,29 +1,29 @@
-from setuptools import find_packages
-from distutils.core import setup
+from setuptools import find_packages, setup
 
-import pkg_conf
+
+from version import __version__
 
 
 setup(
-    keywords = "numpy group_by set-operations indexing",
-    name=pkg_conf.PKG_NAME,
-    version=pkg_conf.get_version(),
+    name="numpy-indexed",
     packages=find_packages(),
-    install_requires=['pyyaml', 'future'],
-    description=pkg_conf.get_recipe_meta()['about']['summary'],
-    long_description=pkg_conf.get_readme_rst(),
-    author=pkg_conf.AUTHOR,
-    author_email=pkg_conf.AUTHOR_EMAIL,
-    url=pkg_conf.get_recipe_meta()['about']['home'],
-    license=pkg_conf.get_recipe_meta()['about']['license'],
-    platforms='any',
+    version=__version__,
+    install_requires=['numpy', 'future'],
+    keywords="numpy group_by set-operations indexing",
+    description=open("README.rst").readlines()[5],
+    long_description=open("README.rst").read(),
+    author="Eelco Hoogendoorn",
+    author_email="hoogendoorn.eelco@gmail.com",
+    url="https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP",
+    license="Freely Distributable",
+    platforms='Any',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
         "Topic :: Utilities",
         'Topic :: Scientific/Engineering',
-        'License :: {}'.format(pkg_conf.get_recipe_meta()['about']['license']),
+        "License :: {}".format("Freely Distributable"),
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
