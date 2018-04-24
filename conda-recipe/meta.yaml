@@ -1,31 +1,23 @@
-about:
-  home: https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP
-  license: Freely Distributable
-  summary: Numpy extensions for set operations on nd-arrays, group_by operations,
-    and related functionality
-build:
-  noarch_python: true
-  number: 1
 package:
   name: numpy-indexed
   version: 0.3.4
+source:
+  path: ..
+build:
+  noarch: python
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+  number: 2
 requirements:
   build:
   - python
-  - numpy
-  - pyyaml 3.11*
-  - future 0.15*
-  - invoke 0.12*
   run:
   - python
   - numpy
   - future
-source:
-  path: ..
 test:
-  commands:
-  - py.test --pyargs numpy_indexed
   imports:
   - numpy_indexed
-  requires:
-  - pytest
+about:
+  home: https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP
+  license: Freely Distributable
+  summary: This package contains functionality for indexed operations on numpy ndarrays, providing efficient vectorized functionality such as grouping and set operations.

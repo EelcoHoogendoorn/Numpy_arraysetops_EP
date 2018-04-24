@@ -3,9 +3,7 @@
 Numpy indexed operations
 ========================
 
-This package contains functionality for indexed operations on numpy
-ndarrays, providing efficient vectorized functionality such as grouping
-and set operations.
+This package contains functionality for indexed operations on numpy ndarrays, providing efficient vectorized functionality such as grouping and set operations.
 
 * Rich and efficient grouping functionality:
 
