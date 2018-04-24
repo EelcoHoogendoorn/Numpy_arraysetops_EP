@@ -23,7 +23,7 @@ setup(
         'Intended Audience :: Developers',
         "Topic :: Utilities",
         'Topic :: Scientific/Engineering',
-        f"License :: Freely Distributable",
+        "License :: {}".format(Freely Distributable),
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',

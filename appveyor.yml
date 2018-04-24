@@ -6,8 +6,9 @@ platform:
   - x64
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
-  - pip install pipenv pip --upgrade
+  - pip install pipenv --upgrade
   - pipenv install --dev --system --skip-lock
 build_script:
+  - set PYTHONPATH=.
   - pytest
   - python setup.py bdist_wheel
