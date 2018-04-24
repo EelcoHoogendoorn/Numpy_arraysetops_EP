@@ -1,12 +1,12 @@
 package:
   name: numpy-indexed
-  version: 0.3.4
+  version: 0.3.5
 source:
   path: ..
 build:
   noarch: python
   script: python setup.py install --single-version-externally-managed --record=record.txt
-  number: 2
+  number: 0
 requirements:
   build:
   - python
