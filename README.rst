@@ -1,4 +1,4 @@
-|Build Status| |Build status|
+|Travis| |PyPI| |Anaconda|
 
 Numpy indexed operations
 ========================
@@ -84,7 +84,9 @@ Todo and open questions:
 - There may be further generalizations that could be built on top of
   these abstractions. merge/join functionality perhaps?
 
-.. |Build Status| image:: https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master
+.. |Travis| image:: https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP.svg?branch=master
    :target: https://travis-ci.org/EelcoHoogendoorn/Numpy_arraysetops_EP
-.. |Build status| image:: https://ci.appveyor.com/api/projects/status/h7w191ovpa9dcfum?svg=true
-   :target: https://ci.appveyor.com/project/clinicalgraphics/numpy-arraysetops-ep
+.. |PyPI| image:: https://badge.fury.io/py/numpy-indexed.svg
+   :target: https://pypi.org/project/numpy-indexed/
+.. |Anaconda| image:: https://anaconda.org/conda-forge/numpy-indexed/badges/version.svg
+   :target: https://anaconda.org/conda-forge/numpy-indexed
