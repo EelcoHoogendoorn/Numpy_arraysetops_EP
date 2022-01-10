@@ -48,8 +48,8 @@ class BaseIndex(object):
         self.sorted = np.sort(self._keys)
         #the slicing points of the bins to reduce over
         if self.size == 0:
-            self.flag = np.empty(0, np.bool)
-            self.slices = np.empty(0, np.int)
+            self.flag = np.empty(0, bool)
+            self.slices = np.empty(0, int)
         else:
             self.flag = self.sorted[:-1] != self.sorted[1:]
             self.slices = np.concatenate((
@@ -123,8 +123,8 @@ class Index(BaseIndex):
         #computed sorted keys
         self.sorted = self._keys[self.sorter]
         if self.size == 0:
-            self.flag = np.empty(0, np.bool)
-            self.slices = np.empty(0, np.int)
+            self.flag = np.empty(0, bool)
+            self.slices = np.empty(0, int)
         else:
             #the slicing points of the bins to reduce over
             self.flag   = self.sorted[:-1] != self.sorted[1:]
@@ -141,14 +141,14 @@ class Index(BaseIndex):
     @property
     def inverse(self):
         """return index array that maps unique values back to original space. unique[inverse]==keys"""
-        inv = np.empty(self.size, np.int)
+        inv = np.empty(self.size, int)
         inv[self.sorter] = self.sorted_group_rank_per_key
         return inv
 
     @property
     def rank(self):
         """how high in sorted list each key is. inverse permutation of sorter, such that sorted[rank]==keys"""
-        r = np.empty(self.size, np.int)
+        r = np.empty(self.size, int)
         r[self.sorter] = np.arange(self.size)
         return r
 
@@ -221,8 +221,8 @@ class LexIndex(Index):
         self.sorted = self.take(keyviews, self.sorter)
         #the slicing points of the bins to reduce over
         if self.size == 0:
-            self.flag = np.empty(0, np.bool)
-            self.slices = np.empty(0, np.int)
+            self.flag = np.empty(0, bool)
+            self.slices = np.empty(0, int)
         else:
             self.flag   = reduce(
                 np.logical_or,
@@ -264,8 +264,8 @@ class LexIndexSimple(Index):
         self.sorted = tuple(key[self.sorter] for key in self._keys)
         #the slicing points of the bins to reduce over
         if self.size == 0:
-            self.flag = np.empty(0, np.bool)
-            self.slices = np.empty(0, np.int)
+            self.flag = np.empty(0, bool)
+            self.slices = np.empty(0, int)
         else:
             self.flag   = reduce(
                 np.logical_or,

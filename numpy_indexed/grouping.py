@@ -500,11 +500,11 @@ class GroupBy(object):
         -------
         unique: ndarray, [groups]
             unique keys
-        reduced : ndarray, [groups, ...], np.bool
+        reduced : ndarray, [groups, ...], bool
             value array, reduced over groups
         """
         values = np.asarray(values)
-        if not values.dtype == np.bool:
+        if not values.dtype == bool:
             values = values != 0
         return self.unique, self.reduce(values, axis=axis) > 0
 
@@ -522,7 +522,7 @@ class GroupBy(object):
         -------
         unique: ndarray, [groups]
             unique keys
-        reduced : ndarray, [groups, ...], np.bool
+        reduced : ndarray, [groups, ...], bool
             value array, reduced over groups
         """
         values = np.asarray(values)
