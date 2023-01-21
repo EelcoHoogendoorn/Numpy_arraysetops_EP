@@ -121,7 +121,7 @@ def test_setops_edgecase():
     assert np.array_equal(intersection([], []), [])
 
     assert np.array_equal(difference([1], []), [1])
-    assert difference([1], []).dtype == np.int
+    assert difference([1], []).dtype == int
 
     assert np.array_equal(union([], [], []), [])
     assert np.array_equal(exclusive([], []), [])

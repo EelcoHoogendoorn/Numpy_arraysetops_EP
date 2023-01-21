@@ -65,7 +65,7 @@ def count_table(*keys):
     uniques  = [i.unique  for i in indices]
     inverses = [i.inverse for i in indices]
     shape    = [i.groups  for i in indices]
-    table = np.zeros(shape, np.int)
+    table = np.zeros(shape, int)
     np.add.at(table, inverses, 1)
     return tuple(uniques), table
 
@@ -120,7 +120,7 @@ class Table(object):
         return arr
 
     def count(self):
-        table = self.allocate(np.int)
+        table = self.allocate(int)
         np.add.at(table, self.get_inverses(self.indices), 1)
         return tuple(self.uniques), table
 
@@ -131,19 +131,19 @@ class Table(object):
         return tuple(self.uniques), table
 
     def mean(self, values):
-        table = self.allocate(np.float, np.nan)
+        table = self.allocate(float, np.nan)
         keys, values = group_by(self.keys).mean(values)
         table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table
 
     def first(self, values):
-        table = self.allocate(np.float, np.nan)
+        table = self.allocate(float, np.nan)
         keys, values = group_by(self.keys).first(values)
         table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table
 
     def last(self, values):
-        table = self.allocate(np.float, np.nan)
+        table = self.allocate(float, np.nan)
         keys, values = group_by(self.keys).last(values)
         table[self.get_inverses(keys)] = values
         return tuple(self.uniques), table

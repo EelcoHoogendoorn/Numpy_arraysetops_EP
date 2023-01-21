@@ -29,7 +29,7 @@ def test_radial_reduction():
         return np.exp(-(r/sigma)**2)
 
     distribution = np.random.choice([gauss, airy])(R, 0.3)
-    sample = np.random.poisson(distribution*200+10).astype(np.float)
+    sample = np.random.poisson(distribution*200+10).astype(float)
 
     #is this an airy or gaussian function? hard to tell with all this noise!
     plt.imshow(sample, interpolation='nearest', cmap='gray')
